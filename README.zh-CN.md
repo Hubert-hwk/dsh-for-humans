@@ -3,10 +3,14 @@
 > 用**费曼学习法**把 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（`dsh`）讲明白 ——
 > DeepSeek AI 开源的「**万物皆插件**」AI Agent 框架。
 
-**中文原创教程** · 生活化类比 + 幽默讲述 · 12 张原创图解 · 每章费曼自查 · 与 Claude Code / Codex 对比 · **零基础可读**
+**中文原创教程** · 生活化类比 + 幽默讲述 · 14 张原创图解 · 每章费曼自查 · 与 Claude Code / Codex 对比 · **零基础可读**
 
 <div align="center">
   <img src="docs/screenshot-home.png" alt="DeepSeek Harness 通俗教程首页截图" width="720">
+</div>
+
+<div align="center">
+  <img src="assets/img/fig-roadmap.png" alt="dsh 学习路线图：费曼四步 + 四幕十二章旅程" width="720">
 </div>
 
 > **🌐 English readers → [README.md](README.md)**
@@ -47,7 +51,7 @@ DeepSeek Harness（`dsh`）是一个开源的 AI Agent 框架：它把大模型�
 
 - ✅ **零基础可读**：不用先懂框架，Claude Code / Codex 当对比尺子
 - 🧱 **万物皆插件**：从设计思想到源码地图，讲透可替换的骨架
-- 🎨 **12 张原创 SVG 图解**：全部本地资源，无外部 CDN
+- 🎨 **14 张原创 SVG 图解**：全部本地资源，无外部 CDN
 - ❓ **每章费曼自查**：折叠式问答，先自答再看参考
 - 🚀 **100% 纯静态**：无构建步骤，任意静态托管都能跑
 - 📴 **可离线阅读**：下载 zip 双击即看，无需联网
@@ -112,7 +116,7 @@ bash scripts/build-release.sh v1.0.0
 ├── assets/
 │   ├── css/style.css           # 全部样式（无外部字体 / CDN）
 │   ├── js/main.js              # 交互：导航、复制、自查折叠、进度、语法高亮
-│   └── img/                    # 12 张原创 SVG 图解 + favicon
+│   └── img/                    # 14 张原创 SVG 图解 + favicon
 ├── docs/screenshot-home.png    # README 展示用截图
 ├── scripts/build-release.sh    # 一键打包离线 zip
 ├── .github/workflows/          # Pages 自动部署 + Release 自动打包

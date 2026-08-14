@@ -3,10 +3,14 @@
 > Learn [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (`dsh`) the **Feynman way** —
 > a plain-language tutorial for DeepSeek AI's "**everything is a plugin**" AI agent framework.
 
-**Original tutorial** · everyday analogies + a dash of humor · 12 original diagrams · Feynman-style self-quiz in every chapter · side-by-side comparison with Claude Code / Codex · **zero prerequisites**
+**Original tutorial** · everyday analogies + a dash of humor · 14 original diagrams · Feynman-style self-quiz in every chapter · side-by-side comparison with Claude Code / Codex · **zero prerequisites**
 
 <div align="center">
   <img src="docs/screenshot-home.png" alt="DeepSeek Harness 通俗教程 homepage screenshot" width="720">
+</div>
+
+<div align="center">
+  <img src="assets/img/fig-roadmap.png" alt="dsh learning roadmap: Feynman loop + 12 chapters in 4 acts" width="720">
 </div>
 
 > **📌 中文读者请阅读 [README.zh-CN.md](README.zh-CN.md)**（教程内容为中文，英文站点正在翻译中）
@@ -49,7 +53,7 @@ answer it out loud **before** expanding the reference answer — that's the whol
 
 - ✅ **Zero prerequisites**: no framework background needed; Claude Code / Codex used as a comparison ruler
 - 🧱 **Everything is a plugin**: from design philosophy to a source map, the swappable skeleton explained
-- 🎨 **12 original SVG diagrams**: all local assets, no external CDN, nothing to load
+- 🎨 **14 original SVG diagrams**: all local assets, no external CDN, nothing to load
 - ❓ **Feynman self-quiz per chapter**: collapsible Q&A — answer first, then check
 - 🚀 **100% static**: no build step, runs on any static host
 - 📴 **Offline-friendly**: download the zip, double-click, read without internet
@@ -112,7 +116,7 @@ bash scripts/build-release.sh v1.0.0
 ├── assets/
 │   ├── css/style.css           # All styles (no external fonts / CDN)
 │   ├── js/main.js              # Interactions: nav, copy, quiz fold, progress, syntax highlight
-│   └── img/                    # 12 original SVG diagrams + favicon
+│   └── img/                    # 14 original SVG diagrams + favicon
 ├── docs/screenshot-home.png    # Screenshot for the README
 ├── scripts/build-release.sh    # One-command offline zip builder
 ├── .github/workflows/          # Pages auto-deploy + Release auto-package

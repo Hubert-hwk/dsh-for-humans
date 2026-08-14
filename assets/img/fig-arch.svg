@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="-apple-system,'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif">
+  <!-- ============ dsh 全景架构图 · paper-figure 风 ============ -->
+  <defs>
+    <marker id="aArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f4bd6"/>
+    </marker>
+    <marker id="aArrO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#e8590c"/>
+    </marker>
+    <marker id="aArrD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a92a6"/>
+    </marker>
+    <filter id="aShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#1f2430" flood-opacity="0.10"/>
+    </filter>
+    <linearGradient id="aGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2f4bd6"/>
+      <stop offset="1" stop-color="#7c5cff"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="900" fill="#fafbfd"/>
+
+  <!-- 标题 -->
+  <text x="800" y="46" text-anchor="middle" font-size="30" font-weight="800" fill="#1f2430">dsh 全景架构 · 万物皆插件</text>
+  <text x="800" y="78" text-anchor="middle" font-size="16" fill="#7a8296">模型负责「想」，dsh 负责「动手 + 记录」—— 基于 0.1.0-rc.5 源码与官方文档</text>
+
+  <!-- ============ 左列：用户 ============ -->
+  <g filter="url(#aShadow)">
+    <rect x="60" y="110" width="250" height="500" rx="16" fill="#ffffff" stroke="#dde2ee"/>
+    <rect x="60" y="110" width="250" height="46" rx="16" fill="#2f4bd6"/>
+    <rect x="60" y="136" width="250" height="20" fill="#2f4bd6"/>
+    <text x="185" y="139" text-anchor="middle" font-size="17" font-weight="800" fill="#ffffff">你 · 用户</text>
+    <text x="185" y="182" text-anchor="middle" font-size="12.5" fill="#7a8296">坐在驾驶位上的人</text>
+
+    <rect x="82" y="200" width="206" height="52" rx="10" fill="#eef1ff" stroke="#c9d4ff"/>
+    <text x="185" y="222" text-anchor="middle" font-size="14" font-weight="700" fill="#1c2c8a">Web UI</text>
+    <text x="185" y="242" text-anchor="middle" font-size="11.5" fill="#4a5266">浏览器 · 127.0.0.1:3080</text>
+
+    <rect x="82" y="264" width="206" height="52" rx="10" fill="#eef1ff" stroke="#c9d4ff"/>
+    <text x="185" y="286" text-anchor="middle" font-size="14" font-weight="700" fill="#1c2c8a">CLI / headless</text>
+    <text x="185" y="306" text-anchor="middle" font-size="11.5" fill="#4a5266">命令行跑批 · 脚本化</text>
+
+    <rect x="82" y="328" width="206" height="52" rx="10" fill="#eef1ff" stroke="#c9d4ff"/>
+    <text x="185" y="350" text-anchor="middle" font-size="14" font-weight="700" fill="#1c2c8a">SDK</text>
+    <text x="185" y="370" text-anchor="middle" font-size="11.5" fill="#4a5266">程序里集成 agent</text>
+
+    <text x="185" y="426" text-anchor="middle" font-size="13" fill="#4a5266">发任务</text>
+    <text x="185" y="450" text-anchor="middle" font-size="13" fill="#4a5266">看进度</text>
+    <text x="185" y="474" text-anchor="middle" font-size="13" fill="#4a5266">批准高风险操作</text>
+    <text x="185" y="498" text-anchor="middle" font-size="13" fill="#4a5266">审查过程记录</text>
+  </g>
+
+  <!-- ============ 中列：dsh 驾驶舱 ============ -->
+  <g filter="url(#aShadow)">
+    <rect x="400" y="110" width="720" height="500" rx="16" fill="#ffffff" stroke="#dde2ee"/>
+    <rect x="400" y="110" width="720" height="46" rx="16" fill="url(#aGrad)"/>
+    <rect x="400" y="136" width="720" height="20" fill="url(#aGrad)"/>
+    <text x="760" y="139" text-anchor="middle" font-size="17" font-weight="800" fill="#ffffff">dsh · 驾驶舱（Harness）</text>
+
+    <!-- ② Agent Loop -->
+    <rect x="430" y="172" width="660" height="74" rx="12" fill="#fbfcff" stroke="#c6cddd"/>
+    <text x="448" y="196" font-size="15" font-weight="800" fill="#1c2c8a">② Agent Loop · 循环引擎</text>
+    <text x="1072" y="196" text-anchor="end" font-size="12.5" fill="#7a8296">轮次 Turn → 步骤 Step → 收件箱 Inbox</text>
+    <text x="448" y="226" font-size="12.5" fill="#4a5266">排空一次已接纳输入的全过程：模型请求 → 工具执行 → 再请求……直到任务完成</text>
+
+    <!-- ③ 模型适配器 -->
+    <rect x="430" y="258" width="660" height="62" rx="12" fill="#fbfcff" stroke="#c6cddd"/>
+    <text x="448" y="282" font-size="15" font-weight="800" fill="#1c2c8a">③ 模型适配器 · llm-deepseek</text>
+    <text x="448" y="306" font-size="12.5" fill="#4a5266">DeepSeek API · 可整体替换：Claude / GPT / 本地模型 —— 这就是「能力缝」</text>
+
+    <!-- ④ 工具与执行流水线 -->
+    <rect x="430" y="332" width="660" height="88" rx="12" fill="#fbfcff" stroke="#c6cddd"/>
+    <text x="448" y="356" font-size="15" font-weight="800" fill="#1c2c8a">④ 工具与执行流水线</text>
+    <text x="448" y="382" font-size="12.5" fill="#4a5266">每次工具调用都过「安检通道」：</text>
+    <rect x="628" y="366" width="110" height="26" rx="8" fill="#fdf0e6" stroke="#f5c6a0"/><text x="683" y="383" text-anchor="middle" font-size="12" font-weight="600" fill="#c2410c">审批 Approval</text>
+    <rect x="748" y="366" width="96" height="26" rx="8" fill="#fdf0e6" stroke="#f5c6a0"/><text x="796" y="383" text-anchor="middle" font-size="12" font-weight="600" fill="#c2410c">守卫 Guard</text>
+    <rect x="854" y="366" width="96" height="26" rx="8" fill="#fdf0e6" stroke="#f5c6a0"/><text x="902" y="383" text-anchor="middle" font-size="12" font-weight="600" fill="#c2410c">溢出 Spill</text>
+    <text x="448" y="406" font-size="12.5" fill="#4a5266">结果太大自动落盘，模型只见预览 + 取回指引</text>
+
+    <!-- ⑤ 作用域与委派 -->
+    <rect x="430" y="432" width="660" height="156" rx="12" fill="#fbfcff" stroke="#c6cddd"/>
+    <text x="448" y="456" font-size="15" font-weight="800" fill="#1c2c8a">⑤ 作用域 · 委派与扩展</text>
+    <text x="448" y="482" font-size="12.5" fill="#4a5266">每个 agent 有自己的「独立办公室」：</text>
+    <rect x="660" y="466" width="120" height="26" rx="8" fill="#e9f7ef" stroke="#a8d8bd"/><text x="720" y="483" text-anchor="middle" font-size="12" font-weight="600" fill="#14532d">作用域 Scope</text>
+    <rect x="790" y="466" width="110" height="26" rx="8" fill="#e9f7ef" stroke="#a8d8bd"/><text x="845" y="483" text-anchor="middle" font-size="12" font-weight="600" fill="#14532d">遮蔽 Shadowing</text>
+    <text x="448" y="520" font-size="12.5" fill="#4a5266">一个人干不完就招人：</text>
+    <rect x="592" y="504" width="118" height="26" rx="8" fill="#eef1ff" stroke="#c9d4ff"/><text x="651" y="521" text-anchor="middle" font-size="12" font-weight="600" fill="#1c2c8a">子代理 Subagent</text>
+    <rect x="720" y="504" width="108" height="26" rx="8" fill="#eef1ff" stroke="#c9d4ff"/><text x="774" y="521" text-anchor="middle" font-size="12" font-weight="600" fill="#1c2c8a">工作流 Workflow</text>
+    <rect x="838" y="504" width="96" height="26" rx="8" fill="#eef1ff" stroke="#c9d4ff"/><text x="886" y="521" text-anchor="middle" font-size="12" font-weight="600" fill="#1c2c8a">后台 Job</text>
+    <rect x="944" y="504" width="110" height="26" rx="8" fill="#eef1ff" stroke="#c9d4ff"/><text x="999" y="521" text-anchor="middle" font-size="12" font-weight="600" fill="#1c2c8a">技能 Skill</text>
+    <text x="448" y="570" font-size="12.5" fill="#8a92a6">preset / profile / bundle / patch —— 不同装配方案叠出不同形态的 agent</text>
+  </g>
+
+  <!-- ============ 右列：真实世界 ============ -->
+  <g filter="url(#aShadow)">
+    <rect x="1210" y="110" width="330" height="500" rx="16" fill="#ffffff" stroke="#dde2ee"/>
+    <rect x="1210" y="110" width="330" height="46" rx="16" fill="#e8590c"/>
+    <rect x="1210" y="136" width="330" height="20" fill="#e8590c"/>
+    <text x="1375" y="139" text-anchor="middle" font-size="17" font-weight="800" fill="#ffffff">真实世界</text>
+    <text x="1375" y="182" text-anchor="middle" font-size="12.5" fill="#7a8296">工具真正执行的地方</text>
+
+    <rect x="1232" y="200" width="286" height="52" rx="10" fill="#fdf6ef" stroke="#f5dcc8"/>
+    <text x="1375" y="222" text-anchor="middle" font-size="14" font-weight="700" fill="#b45309">文件系统</text>
+    <text x="1375" y="242" text-anchor="middle" font-size="11.5" fill="#7a8296">读写 · 工作区 · 沙箱</text>
+
+    <rect x="1232" y="264" width="286" height="52" rx="10" fill="#fdf6ef" stroke="#f5dcc8"/>
+    <text x="1375" y="286" text-anchor="middle" font-size="14" font-weight="700" fill="#b45309">终端 bash</text>
+    <text x="1375" y="306" text-anchor="middle" font-size="11.5" fill="#7a8296">跑命令 · 60s 超时</text>
+
+    <rect x="1232" y="328" width="286" height="52" rx="10" fill="#fdf6ef" stroke="#f5dcc8"/>
+    <text x="1375" y="350" text-anchor="middle" font-size="14" font-weight="700" fill="#b45309">网页</text>
+    <text x="1375" y="370" text-anchor="middle" font-size="11.5" fill="#7a8296">搜索 · 抓取 · 阅读</text>
+
+    <rect x="1232" y="392" width="286" height="52" rx="10" fill="#fdf6ef" stroke="#f5dcc8"/>
+    <text x="1375" y="414" text-anchor="middle" font-size="14" font-weight="700" fill="#b45309">子代理 / 外部进程</text>
+    <text x="1375" y="434" text-anchor="middle" font-size="11.5" fill="#7a8296">委派任务的执行者</text>
+
+    <text x="1375" y="500" text-anchor="middle" font-size="13" fill="#4a5266">模型只负责「想」</text>
+    <text x="1375" y="524" text-anchor="middle" font-size="13" fill="#4a5266">动手全在这里发生</text>
+    <text x="1375" y="556" text-anchor="middle" font-size="13" fill="#8a92a6">工具 = 模型的手</text>
+  </g>
+
+  <!-- ============ 流程箭头 ============ -->
+  <!-- ① 发任务 -->
+  <line x1="312" y1="196" x2="398" y2="196" stroke="#2f4bd6" stroke-width="4" marker-end="url(#aArr)"/>
+  <circle cx="348" cy="196" r="13" fill="#2f4bd6"/>
+  <text x="348" y="201" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff">①</text>
+  <text x="320" y="180" font-size="13" font-weight="700" fill="#2f4bd6">发任务</text>
+
+  <!-- ② 想（loop→模型） -->
+  <line x1="760" y1="248" x2="760" y2="256" stroke="#2f4bd6" stroke-width="4" marker-end="url(#aArr)"/>
+  <!-- ③ 调工具（模型→流水线） -->
+  <line x1="760" y1="322" x2="760" y2="330" stroke="#2f4bd6" stroke-width="4" marker-end="url(#aArr)"/>
+  <text x="784" y="290" font-size="13" font-weight="700" fill="#2f4bd6">② 想</text>
+  <text x="784" y="330" font-size="13" font-weight="700" fill="#2f4bd6">③ 调工具</text>
+
+  <!-- ④ 执行（流水线→真实世界） -->
+  <line x1="1092" y1="376" x2="1208" y2="376" stroke="#e8590c" stroke-width="4" marker-end="url(#aArrO)"/>
+  <circle cx="1144" cy="376" r="13" fill="#e8590c"/>
+  <text x="1144" y="381" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff">④</text>
+  <text x="1150" y="362" font-size="13" font-weight="700" fill="#e8590c">执行</text>
+
+  <!-- ⑤ 委派（虚线） -->
+  <path d="M1092,500 q50,20 110,10" stroke="#8a92a6" stroke-width="3.5" fill="none" stroke-dasharray="8 7" marker-end="url(#aArrD)"/>
+  <circle cx="1136" cy="506" r="13" fill="#8a92a6"/>
+  <text x="1136" y="511" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff">⑤</text>
+  <text x="1100" y="538" font-size="13" font-weight="700" fill="#8a92a6">委派</text>
+
+  <!-- ============ 会话日志横带 ============ -->
+  <g filter="url(#aShadow)">
+    <rect x="60" y="650" width="1480" height="110" rx="16" fill="#1f2430"/>
+    <circle cx="96" cy="705" r="17" fill="#7c5cff"/>
+    <text x="96" y="712" text-anchor="middle" font-size="16" font-weight="800" fill="#ffffff">⑥</text>
+    <text x="132" y="694" font-size="20" font-weight="800" fill="#ffffff">会话日志 Session Log · 唯一真源</text>
+    <text x="132" y="726" font-size="15" fill="#c9d1e4">只追加的账本：每一步（消息 / 工具调用 / 结果）都记进去；模型历史不单独存储 —— 随时从日志重算（deriveMessages）</text>
+    <text x="132" y="750" font-size="13.5" fill="#8a92a6">「流水账 vs 余额」：日志是账本，模型历史只是从账本算出来的余额</text>
+  </g>
+
+  <!-- 向上虚线箭头：各模块 → 日志 -->
+  <path d="M520,610 L520,648" stroke="#7c5cff" stroke-width="3" fill="none" stroke-dasharray="6 6"/>
+  <path d="M760,610 L760,648" stroke="#7c5cff" stroke-width="3" fill="none" stroke-dasharray="6 6"/>
+  <path d="M1000,610 L1000,648" stroke="#7c5cff" stroke-width="3" fill="none" stroke-dasharray="6 6"/>
+  <text x="1030" y="634" font-size="13" font-weight="700" fill="#7c5cff">都记进 ⑥</text>
+
+  <!-- 底部注 -->
+  <text x="800" y="812" text-anchor="middle" font-size="16" font-weight="600" fill="#4a5266">🧩 万物皆插件：模型适配器、工具、会话日志、循环本身都是可替换的积木 —— 换一块，产品跟着变</text>
+  <text x="800" y="844" text-anchor="middle" font-size="13" fill="#8a92a6">想深入？第 11 章手把手：装环境 → 跑 Web UI → headless 批处理 → 写第一个组合包</text>
+</svg>
