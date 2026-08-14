@@ -1,137 +1,140 @@
-# 🎓 DeepSeek Harness 通俗教程 · 费曼学习法版
+# 🎓 DeepSeek Harness for Humans
 
-> 用**费曼学习法**把 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（`dsh`）讲明白 ——
-> DeepSeek AI 开源的「**万物皆插件**」AI Agent 框架。
+> Learn [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (`dsh`) the **Feynman way** —
+> a plain-language tutorial for DeepSeek AI's "**everything is a plugin**" AI agent framework.
 
-**中文原创教程** · 生活化类比 + 幽默讲述 · 12 张原创图解 · 每章费曼自查 · 与 Claude Code / Codex 对比 · **零基础可读**
+**Original tutorial** · everyday analogies + a dash of humor · 12 original diagrams · Feynman-style self-quiz in every chapter · side-by-side comparison with Claude Code / Codex · **zero prerequisites**
 
 <div align="center">
-  <img src="docs/screenshot-home.png" alt="DeepSeek Harness 通俗教程首页截图" width="720">
+  <img src="docs/screenshot-home.png" alt="DeepSeek Harness 通俗教程 homepage screenshot" width="720">
 </div>
+
+> **📌 中文读者请阅读 [README.zh-CN.md](README.zh-CN.md)**（教程内容为中文，英文站点正在翻译中）
 
 | | |
 |---|---|
-| 🌐 在线阅读 | https://Hubert-hwk.github.io/dsh-feynman-tutorial/ |
-| 📦 离线下载 | [GitHub Releases](https://github.com/Hubert-hwk/dsh-feynman-tutorial/releases/latest)（zip，解压双击 `index.html` 即读） |
+| 🌐 Read online | https://Hubert-hwk.github.io/dsh-for-humans/ |
+| 📦 Offline download | [GitHub Releases](https://github.com/Hubert-hwk/dsh-for-humans/releases/latest) (zip — unzip and double-click `index.html`) |
 | 📄 License | [MIT](LICENSE) © Hubert-hwk |
 
 ---
 
-## 这份教程是什么
+## What is this?
 
-DeepSeek Harness（`dsh`）是一个开源的 AI Agent 框架：它把大模型接上真实世界（文件、终端、网页、子代理），
-并负责「想清楚之后怎么动手、动手之后怎么记录」。它宣称**万物皆插件** —— 模型适配器、工具、会话日志、
-循环本身都是可替换的积木。
+DeepSeek Harness (`dsh`) is an open-source AI agent framework from DeepSeek AI: it connects a large language
+model to the real world — files, terminals, web pages, subagents — and handles "how to act once you've decided,
+how to record everything you've done." Its headline claim: **everything is a plugin** — model adapters, tools,
+session logs, even the agent loop itself are swappable building blocks.
 
-「万物皆插件」这五个字每个都认识，连起来就劝退？没关系 —— 这份教程用**费曼学习法**
-（选概念 → 大白话讲 → 自己复述 → 查漏补缺）把它讲明白：生活类比、原创图解、讲完还考你，
-保证小白也能**笑着看懂**。没听过 dsh？我们用你熟悉的 **Claude Code / Codex** 当尺子，从头量到尾。
+"Everything is a plugin" is five words you can read and still not understand. That's exactly what this tutorial
+is for. It explains dsh using the **Feynman technique** (pick a concept → explain it in plain words → recite it
+back → fill the gaps): everyday analogies, original diagrams, and a quiz after every chapter. If you've never
+heard of dsh, no problem — we use **Claude Code / Codex** as a yardstick and measure everything from there.
 
-内容基于 dsh 仓库最新源码与官方文档撰写，核对到 **0.1.0-rc.5**。
+Written against the latest source and official docs of the dsh repository, verified up to **0.1.0-rc.5**.
 
-## 内容一览（12 章 · 四幕）
+## Table of contents (12 chapters · 4 acts)
 
-| 幕 | 章节 | 内容 |
+| Act | Chapters | Contents |
 |---|---|---|
-| 第一幕 · 它是什么 | 01–03 | 一分钟看懂 dsh · 万物皆插件 · **和 Claude Code / Codex 比一比** |
-| 第二幕 · 核心机制 | 04–06 | Cordis 五件事 · 一次对话的旅程（轮次） · 会话日志：唯一真源 |
-| 第三幕 · 可插拔能力 | 07–10 | 能力缝 · 工具与执行流水线 · 作用域 · 委派与扩展 |
-| 第四幕 · 动手与资源 | 11–12 | 动手：跑起来 + 写插件 · 术语表与下一步 |
+| Act I · What it is | 01–03 | dsh in one minute · everything is a plugin · **vs Claude Code / Codex** |
+| Act II · Core mechanics | 04–06 | Cordis in five ideas · the journey of one conversation (turns) · session log: single source of truth |
+| Act III · Pluggable power | 07–10 | seams · tools & the execution pipeline · scopes · delegation & extension |
+| Act IV · Hands-on & resources | 11–12 | run it + write a plugin · glossary & next steps |
 
-顺读 01 → 11 约 40 分钟（中间允许笑出声）。每一章结尾的「费曼自查」请先自己讲一遍再看答案 ——
-那才是费曼学习法的关键一步。
+Reading 01 → 11 in order takes about 40 minutes (laughter breaks allowed). For each chapter's Feynman quiz,
+answer it out loud **before** expanding the reference answer — that's the whole point.
 
-## 特性
+## Features
 
-- ✅ **零基础可读**：不用先懂框架，Claude Code / Codex 当对比尺子
-- 🧱 **万物皆插件**：从设计思想到源码地图，讲透可替换的骨架
-- 🎨 **12 张原创 SVG 图解**：全部本地资源，无外部 CDN
-- ❓ **每章费曼自查**：折叠式问答，先自答再看参考
-- 🚀 **100% 纯静态**：无构建步骤，任意静态托管都能跑
-- 📴 **可离线阅读**：下载 zip 双击即看，无需联网
+- ✅ **Zero prerequisites**: no framework background needed; Claude Code / Codex used as a comparison ruler
+- 🧱 **Everything is a plugin**: from design philosophy to a source map, the swappable skeleton explained
+- 🎨 **12 original SVG diagrams**: all local assets, no external CDN, nothing to load
+- ❓ **Feynman self-quiz per chapter**: collapsible Q&A — answer first, then check
+- 🚀 **100% static**: no build step, runs on any static host
+- 📴 **Offline-friendly**: download the zip, double-click, read without internet
 
-## 怎么用（三种方式）
+## Getting started (three ways)
 
-### 方式一：在线阅读（推荐）
+### 1. Read online (recommended)
 
-打开 https://Hubert-hwk.github.io/dsh-feynman-tutorial/ 即可，手机 / 平板 / 电脑浏览器都兼容。
+Open https://Hubert-hwk.github.io/dsh-for-humans/ — works on phones, tablets, and desktops.
 
-### 方式二：下载离线包
+### 2. Download the offline bundle
 
-到 [Releases 页](https://github.com/Hubert-hwk/dsh-feynman-tutorial/releases/latest) 下载 zip，
-解压后双击 `index.html` 即可阅读 —— 零外部依赖，断网也能看。
+Grab the zip from the [Releases page](https://github.com/Hubert-hwk/dsh-for-humans/releases/latest),
+unzip it, and double-click `index.html`. Zero external dependencies — it works offline.
 
-### 方式三：本地预览 / 自己改
+### 3. Run locally / hack on it
 
 ```sh
-# 克隆本仓库
-git clone https://github.com/Hubert-hwk/dsh-feynman-tutorial.git
-cd dsh-feynman-tutorial
+git clone https://github.com/Hubert-hwk/dsh-for-humans.git
+cd dsh-for-humans
 
-# 本地预览（任选其一）
-python3 -m http.server 8080     # 浏览器打开 http://127.0.0.1:8080
-# 或直接双击 index.html（file:// 协议同样支持）
+# local preview (pick one)
+python3 -m http.server 8080     # open http://127.0.0.1:8080
+# or just double-click index.html (file:// protocol works too)
 ```
 
-## 部署到 GitHub Pages
+## Deploy to GitHub Pages
 
-本项目已内置 GitHub Actions 工作流（`.github/workflows/pages.yml`）：**推送到 `main` 分支即自动部署**，无需手动构建。
+A GitHub Actions workflow (`.github/workflows/pages.yml`) is included: **pushing to `main` deploys automatically** — no manual build.
 
-首次启用只需一步：
+Enable it once, in one step:
 
-1. 推送代码后，打开仓库 **Settings → Pages**；
-2. **Source** 选择 `GitHub Actions`（不要选 "Deploy from a branch"），保存即可；
-3. 等 1~2 分钟，访问 `https://Hubert-hwk.github.io/dsh-feynman-tutorial/`。
+1. After pushing, open repo **Settings → Pages**;
+2. Set **Source** to `GitHub Actions` (do *not* pick "Deploy from a branch"), then Save;
+3. Wait 1–2 minutes and visit `https://Hubert-hwk.github.io/dsh-for-humans/`.
 
-> 手动方式（不用 Actions 时）：Settings → Pages → Source 选 `Deploy from a branch` → 分支 `main` → 目录 `/ (root)` → Save。
+> Manual alternative: Settings → Pages → Source `Deploy from a branch` → branch `main` → folder `/ (root)` → Save.
 
-## 发布离线包（GitHub Releases）
+## Publish an offline release
 
-打一个形如 `v1.0.0` 的 tag 推送，`.github/workflows/release.yml` 会自动打包 zip 并创建 Release：
+Push a tag like `v1.0.0`; `.github/workflows/release.yml` builds the zip and creates a GitHub Release:
 
 ```sh
 git tag v1.0.0
 git push origin v1.0.0
-# 稍等片刻，Releases 页即出现带 zip 附件的发布
 ```
 
-也可以本地手动打包（不依赖 CI）：
+Or build locally without CI:
 
 ```sh
 bash scripts/build-release.sh v1.0.0
-# 产物：dist/deepseek-harness-tutorial-v1.0.0.zip
+# artifact: dist/deepseek-harness-tutorial-v1.0.0.zip
 ```
 
-## 目录结构
+## Repository structure
 
 ```
-├── index.html                  # 首页（教程导航 + 费曼学习法说明）
-├── chapters/                   # 12 个章节页面
+├── index.html                  # Homepage (navigation + Feynman method intro)
+├── chapters/                   # 12 chapter pages
 ├── assets/
-│   ├── css/style.css           # 全部样式（无外部字体 / CDN）
-│   ├── js/main.js              # 交互：导航、复制、自查折叠、进度、语法高亮
-│   └── img/                    # 12 张原创 SVG 图解 + favicon
-├── docs/screenshot-home.png    # README 展示用截图
-├── scripts/build-release.sh    # 一键打包离线 zip
-├── .github/workflows/          # Pages 自动部署 + Release 自动打包
-├── README.md
+│   ├── css/style.css           # All styles (no external fonts / CDN)
+│   ├── js/main.js              # Interactions: nav, copy, quiz fold, progress, syntax highlight
+│   └── img/                    # 12 original SVG diagrams + favicon
+├── docs/screenshot-home.png    # Screenshot for the README
+├── scripts/build-release.sh    # One-command offline zip builder
+├── .github/workflows/          # Pages auto-deploy + Release auto-package
+├── README.md                   # This file (English)
+├── README.zh-CN.md             # 中文版说明
 └── LICENSE
 ```
 
-## 自定义与贡献
+## Customize & contribute
 
-- 发现讲得不明白、有错误、或想补充内容？欢迎提 [Issue](https://github.com/Hubert-hwk/dsh-feynman-tutorial/issues) 和 [PR](https://github.com/Hubert-hwk/dsh-feynman-tutorial/pulls)；
-- 改内容：直接编辑 `chapters/*.html`（正文是语义化标签，浏览器开 DevTools 定位即可）；
-- 改样式：`assets/css/style.css` 顶部的 `:root` 主题变量（`--brand` 主色、`--accent` 强调色）；
-- 改图：`assets/img/*.svg` 是矢量图，任意文本编辑器或 Figma / Inkscape 可打开；
-- 「费曼自查」在 `<div class="quiz-item">` 里，`<div class="a">` 即参考答案，默认折叠点击展开；
-- 改完本地预览确认后提交，推送 `main` 即自动上线。
+- Found something unclear, wrong, or missing? Open an [Issue](https://github.com/Hubert-hwk/dsh-for-humans/issues) or send a [PR](https://github.com/Hubert-hwk/dsh-for-humans/pulls);
+- Edit content: `chapters/*.html` directly (semantic markup; DevTools will locate anything);
+- Edit styles: theme variables in the `:root` block at the top of `assets/css/style.css` (`--brand` primary, `--accent` accent);
+- Edit diagrams: `assets/img/*.svg` are vector files — open in any text editor, Figma, or Inkscape;
+- The Feynman quizzes live in `<div class="quiz-item">`; `<div class="a">` is the reference answer (collapsed by default);
+- Preview locally after changes, commit, push to `main` — it goes live automatically.
 
-## 致谢与参考
+## Acknowledgments
 
-- [DeepSeek Harness 源码仓库](https://github.com/deepseek-ai/deepseek-harness)（MIT License）
-- dsh 仓库内 `docs/` 下的官方文档（中英双语）与 `examples/` 示例
-- Cordis：dsh 底层的插件框架
+- [DeepSeek Harness source](https://github.com/deepseek-ai/deepseek-harness) (MIT License)
+- Official docs under `docs/` (Chinese & English) and `examples/` in the dsh repo
+- Cordis: the plugin framework underneath dsh
 
 ## License
 
