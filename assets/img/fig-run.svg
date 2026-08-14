@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 410" font-family="-apple-system,'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif">
+  <defs>
+    <filter id="rShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#1f2430" flood-opacity="0.14"/>
+    </filter>
+    <marker id="rArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f4bd6"/>
+    </marker>
+    <linearGradient id="rGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2f4bd6"/>
+      <stop offset="1" stop-color="#7c5cff"/>
+    </linearGradient>
+  </defs>
+
+  <text x="430" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1f2430">🎛️ 同一棵树，三种外壳：Web、Headless、SDK/ACP</text>
+
+  <!-- 中：插件树 -->
+  <g filter="url(#rShadow)">
+    <rect x="310" y="66" width="240" height="256" rx="18" fill="url(#rGrad)"/>
+    <text x="430" y="96" text-anchor="middle" font-size="15.5" font-weight="800" fill="#ffffff">🌳 同一棵插件树</text>
+    <text x="430" y="118" text-anchor="middle" font-size="11.5" fill="#e6e9ff">llm · tools · session · loop</text>
+    <g font-size="11.5" fill="#1c2c8a">
+      <rect x="332" y="134" width="196" height="30" rx="8" fill="#ffffff"/><text x="430" y="154" text-anchor="middle">沙箱 · 审批 · 设置 · 凭据</text>
+      <rect x="332" y="172" width="196" height="30" rx="8" fill="#ffffff"/><text x="430" y="192" text-anchor="middle">subagent · workflow · skill</text>
+      <rect x="332" y="210" width="196" height="30" rx="8" fill="#ffffff"/><text x="430" y="230" text-anchor="middle">持久化 · 投影 · 遥测</text>
+      <rect x="332" y="248" width="196" height="30" rx="8" fill="#ffffff"/><text x="430" y="268" text-anchor="middle">➕ 你的插件（bundle）</text>
+    </g>
+    <text x="430" y="308" text-anchor="middle" font-size="11" fill="#c9d4ff">profile web / headless 决定装哪些层</text>
+  </g>
+
+  <!-- 左：web -->
+  <g filter="url(#rShadow)">
+    <rect x="30" y="86" width="230" height="156" rx="16" fill="#ffffff" stroke="#c6cddd"/>
+    <text x="145" y="116" text-anchor="middle" font-size="15" font-weight="700" fill="#1f2430">🖥️ dsh web</text>
+    <text x="145" y="142" text-anchor="middle" font-size="12" fill="#4a5266">浏览器界面（默认 3080 端口）</text>
+    <text x="145" y="164" text-anchor="middle" font-size="12" fill="#4a5266">选工作区 · 配模型 · 聊任务</text>
+    <text x="145" y="186" text-anchor="middle" font-size="12" fill="#4a5266">看进度 · 审批准入 · 看日志</text>
+    <text x="145" y="216" text-anchor="middle" font-size="11.5" fill="#7a8296">适合人机协作的日常</text>
+  </g>
+
+  <!-- 右：headless/sdk -->
+  <g filter="url(#rShadow)">
+    <rect x="600" y="86" width="230" height="156" rx="16" fill="#ffffff" stroke="#c6cddd"/>
+    <text x="715" y="116" text-anchor="middle" font-size="15" font-weight="700" fill="#1f2430">⌨️ headless / SDK</text>
+    <text x="715" y="142" text-anchor="middle" font-size="12" fill="#4a5266">命令行一次性跑任务</text>
+    <text x="715" y="164" text-anchor="middle" font-size="12" fill="#4a5266">JSON-RPC / Python SDK</text>
+    <text x="715" y="186" text-anchor="middle" font-size="12" fill="#4a5266">ACP 自动化服务器</text>
+    <text x="715" y="216" text-anchor="middle" font-size="11.5" fill="#7a8296">适合脚本与自动化</text>
+  </g>
+
+  <line x1="260" y1="164" x2="308" y2="164" stroke="#2f4bd6" stroke-width="2.5" marker-end="url(#rArr)"/>
+  <line x1="552" y1="164" x2="598" y2="164" stroke="#2f4bd6" stroke-width="2.5" marker-end="url(#rArr)"/>
+
+  <text x="430" y="352" text-anchor="middle" font-size="13" fill="#7a8296">换外壳不改内核：你在 Web 里攒的会话，可以在 headless 里接着跑；SDK 能驱动同一套能力。</text>
+  <text x="430" y="380" text-anchor="middle" font-size="13" fill="#7a8296">一切行为由 cordis.yml / patch 决定 —— 没有魔法，全是插件。</text>
+</svg>

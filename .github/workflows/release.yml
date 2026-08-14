@@ -1,0 +1,26 @@
+# 推送形如 v1.0.0 的 tag 后，自动打包离线 zip 并发布到 GitHub Releases
+# 用法：git tag v1.0.0 && git push origin v1.0.0
+name: Build and publish release zip
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build offline zip
+        run: bash scripts/build-release.sh "${GITHUB_REF#refs/tags/}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          generate_release_notes: true

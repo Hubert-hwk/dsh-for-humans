@@ -1,0 +1,16 @@
+# ---------- 系统 / 编辑器 ----------
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# ---------- 构建产物（发布包） ----------
+dist/
+
+# ---------- 本地运行 dsh 时可能产生的文件 ----------
+# （如果你在这个目录里跑 dsh 做演示/开发，忽略这些运行时文件）
+.sessions/
+settings.yaml
+.credentials.yaml
+*.log

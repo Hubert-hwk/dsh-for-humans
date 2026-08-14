@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Cordis 五件事：插件、上下文、注入、类型化事件、可逆副作用。">
+<title>04 Cordis 五件事 · DeepSeek Harness 通俗教程</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="../index.html">
+      <span class="logo">dsh</span>
+      <span>
+        <span class="title">DeepSeek Harness 教程</span><br>
+        <span class="subtitle">费曼学习法 · 大白话版</span>
+      </span>
+    </a>
+        <nav class="nav">
+      <div class="nav-label">开始</div>
+      <a class="nav-link" href="../index.html"><span class="no">⌂</span><span>首页：这份教程怎么用</span></a>
+      <div class="nav-label">第一幕 · 它是什么</div>
+      <a class="nav-link" href="01-what-is-dsh.html"><span class="no">01</span><span>一分钟看懂 dsh</span></a>
+      <a class="nav-link" href="02-plugins.html"><span class="no">02</span><span>万物皆插件（乐高积木）</span></a>
+      <a class="nav-link" href="03-vs-claude-codex.html"><span class="no">03</span><span>和 Claude Code / Codex 比一比</span></a>
+      <div class="nav-label">第二幕 · 核心机制</div>
+      <a class="nav-link active" href="04-cordis-five.html"><span class="no">04</span><span>Cordis 五件事</span></a>
+      <a class="nav-link" href="05-turn.html"><span class="no">05</span><span>一次对话的旅程（轮次）</span></a>
+      <a class="nav-link" href="06-session-log.html"><span class="no">06</span><span>会话日志：唯一真源</span></a>
+      <div class="nav-label">第三幕 · 可插拔能力</div>
+      <a class="nav-link" href="07-seam.html"><span class="no">07</span><span>能力缝：可替换的能力</span></a>
+      <a class="nav-link" href="08-tools.html"><span class="no">08</span><span>工具与执行流水线</span></a>
+      <a class="nav-link" href="09-scope.html"><span class="no">09</span><span>作用域：agent 的独立办公室</span></a>
+      <a class="nav-link" href="10-delegation.html"><span class="no">10</span><span>委派与扩展（子代理/工作流）</span></a>
+      <div class="nav-label">第四幕 · 动手与资源</div>
+      <a class="nav-link" href="11-hands-on.html"><span class="no">11</span><span>动手：跑起来 + 写插件</span></a>
+      <a class="nav-link" href="12-next.html"><span class="no">12</span><span>术语表与下一步</span></a>
+    </nav>
+    <div class="side-foot">
+      开源教程 · 基于 deepseek-harness（0.1.0-rc.5）源码与官方文档<br>
+      欢迎 <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial">Star · Issue · PR</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="打开导航">☰</button>
+            <div class="crumbs">第二幕 · 核心机制 / <b>04 Cordis 五件事</b></div>
+      <div class="progress"><span id="progressText">0%</span><span class="bar"><i id="progressBar"></i></span></div>
+    </header>
+
+    <article class="content">
+
+      <div class="ch-head">
+        <div class="kicker">第二幕 · 核心机制 · 第 04 章</div>
+        <h1>Cordis 五件事</h1>
+        <p class="lede">乐高积木之间靠什么咬合？—— Cordis。五个核心概念，吃透它们就吃透了 dsh 的一半。</p>
+      </div>
+
+
+      <div class="card analogy">
+        <div class="card-title"><span class="ic">🔩</span>开场小故事：积木的咬合标准</div>
+                <p>
+          上一章说 dsh 是乐高积木。但积木之间靠什么咬合？不同厂商的积木为什么能互插？靠的是统一的凸点与凹槽标准——就像手机充电口，Type-C 一统江湖，你出门才不用带八根线。
+        </p>
+        <p style="margin-bottom:0">
+          Cordis 就是 dsh 的「咬合标准」——一个插件框架（dsh 以 vendor 方式引入它）。它的设计思想来自一篇论文《A Programming Paradigm for Spatiotemporal Composability》。名字很唬人（念出来能劝退 90% 的读者），但你只需要记住：插件往共享的「上下文」里贡献服务、事件和可逆副作用，积木就能彼此协作、也能干净地拆掉。
+        </p>
+
+      </div>
+
+      <div class="oneliner">
+        一句话讲清楚：Cordis 用 <b>五个概念</b>定义插件如何协作 ——
+        <b>插件</b>（功能单元）、<b>上下文 ctx</b>（服务的容器）、<b>inject</b>（依赖声明）、
+        <b>类型化事件</b>（通信方式）、<b>可逆副作用</b>（注册与撤销）。
+      </div>
+
+      <figure class="fig">
+        <img src="../assets/img/fig-cordis-five.svg" alt="Cordis 五个核心概念关系图">
+        <figcaption><b>图 04-1</b> 插件位于中心，通过上下文、注入、事件与副作用跟世界打交道。</figcaption>
+      </figure>
+
+      <h2>五件事，逐一说清</h2>
+
+      <h3>① 插件 —— 功能单元</h3>
+      <p>
+        插件可以是带可选 <code>inject</code> 和 <code>apply(ctx)</code> 的函数，
+        也可以是一个 <code>Service</code> 子类。它的生命周期（加载、就绪、卸载）由 Cordis 管理。
+        一个插件通常只做一件事：注册工具、注册适配器、监听事件、或提供一项服务。
+      </p>
+
+      <h3>② 上下文 ctx —— 服务的容器</h3>
+      <p>
+        每个服务占据一个稳定的 <code>ctx.&lt;key&gt;</code>：<code>ctx.llm</code>（模型）、
+        <code>ctx.tools</code>（工具注册表）、<code>ctx.sessions</code>（会话日志）、
+        <code>ctx.shell</code>（bash 执行）、<code>ctx.fs</code>（文件系统）……
+      </p>
+      <p>
+        关键规则：<b>其他插件通过 key 查找服务，而不是 import 具体实现</b>。
+        这就像插座按「标签」找插头：只要标签对，插头是谁家的都行 —— 这正是「换实现不用改调用方」的基础。
+      </p>
+
+      <h3>③ inject —— 声明依赖</h3>
+      <p>
+        插件声明自己需要哪些服务（inject 列表），Cordis 会<b>等这些服务就绪后才启动该插件</b>。
+        于是加载顺序由依赖关系自动推导，不需要手动编排启动顺序。
+        你不需要关心「谁先加载」，只需要说「我要什么」。
+      </p>
+
+      <h3>④ 类型化事件 —— 通信方式</h3>
+      <p>
+        服务之间用事件通信。事件名通过 TypeScript 声明合并注册（插件可以给别人的事件表「加新事件」而不改源包），
+        并且每种事件有固定的<b>分发模式</b>：
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>模式</th><th>是否等待？</th><th>顺序</th><th>有返回值？</th><th>像什么</th></tr></thead>
+          <tbody>
+            <tr><td><code>emit</code></td><td>否</td><td>按注册顺序观察</td><td>否</td><td>广播喇叭：大家听，别插嘴</td></tr>
+            <tr><td><code>waterfall</code></td><td>否</td><td>按注册顺序包装</td><td>是</td><td>接力棒：传下去或拍板短路</td></tr>
+            <tr><td><code>parallel</code></td><td>是</td><td>并行观察</td><td>否</td><td>同时举手</td></tr>
+            <tr><td><code>serial</code></td><td>是</td><td>按注册顺序执行</td><td>是</td><td>排队叫号</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <b>waterfall 值得单独记住</b>，因为 dsh 的所有「拦截点」几乎都是它：
+        监听器收到 <code>(...args, next)</code>，调用 <code>next()</code> 把接力棒传下去并拿到下游结果；
+        <b>不调用 next() 直接返回 = 短路</b>，下游全部被跳过。
+        所以「想改行为的插件」在 waterfall 里等下游结果再包装，或直接拍板替换；
+        「只想看一眼的插件」必须记得 <code>next()</code>，否则会把整个链条掐断。
+      </p>
+
+      <h3>⑤ 可逆副作用 —— 注册与撤销</h3>
+      <p>
+        插件的所有「安装动作」（注册工具、挂监听器、装适配器）都是<b>副作用</b>，
+        通过 <code>ctx.effect()</code> 或 <code>ctx.on()</code> 完成。每个注册返回一个
+        <b>disposer（释放函数）</b>；插件卸载或重载时，Cordis 会按预期顺序撤销一切。
+      </p>
+      <p>
+        这解决了插件系统最头疼的问题：<b>「拆积木」留下的残渣</b>。
+        传统系统里卸载插件经常留下幽灵监听器、幽灵定时器；Cordis 里卸载 = 一切注册随之撤销，干干净净。
+      </p>
+
+      <div class="card notebox">
+        <div class="card-title"><span class="ic">💡</span>实践规则（官方原话的精神）</div>
+        <p style="margin-bottom:0">
+          把行为封装为插件：工具流水线事件属于 <code>ctx.tools</code>，模型流式输出属于 <code>ctx.llm</code>，
+          实时 agent 协调属于 <code>ctx.agents</code>。<b>拦截和策略优先用事件；直接能力调用优先用服务方法。</b>
+        </p>
+      </div>
+
+      <h2>费曼自查</h2>
+
+      <div class="quiz-item">
+        <div class="q"><span class="qn">1</span><span>为什么「服务靠 key 查找而不是 import」很重要？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：因为这样服务的实现可以整体替换而不动调用方。调用方只依赖 `ctx.llm` 这个「插座标签」，至于插头是 DeepSeek 适配器还是别的适配器，它不关心 —— 这是能力缝（第 07 章）的根基。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">2</span><span>waterfall 事件的监听器什么时候可以「不调用 next()」？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：当它拥有决策权、要拍板短路时 —— 比如直接拒绝一次工具调用。只做观察或标注的监听器必须调用 next() 委托下去，否则会截断整条链。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">3</span><span>「可逆副作用」解决了什么问题？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：解决了卸载残留。每个注册都有 disposer，插件卸载时 Cordis 自动按序撤销所有注册（工具、监听器、适配器），不会留下幽灵监听器或定时器，支持安全的重载与热插拔。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">4</span><span>插件想「在每次模型请求前注入一段上下文」，该用哪种机制？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：用事件（扩展点）。dsh 的 agent/request、agent/pre-step 等 waterfall 就是为这类拦截设计的（第 05 章会看到它们登场）。这就是「拦截和策略优先使用事件」。</div>
+      </div>
+
+      <nav class="ch-nav">
+        <a href="03-vs-claude-codex.html"><div class="dir">← 上一章</div><div class="ttl">和 Claude Code / Codex 比一比</div></a>
+        <a class="next" href="05-turn.html"><div class="dir">下一章 →</div><div class="ttl">一次对话的旅程（轮次）</div></a>
+      </nav>
+
+    </article>
+  </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="DeepSeek Harness 与 Claude Code、Codex 的对比：产品 vs 平台，以及 dsh 如何把两者当子代理调用。">
+<title>03 和 Claude Code / Codex 比一比 · DeepSeek Harness 通俗教程</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="../index.html">
+      <span class="logo">dsh</span>
+      <span>
+        <span class="title">DeepSeek Harness 教程</span><br>
+        <span class="subtitle">费曼学习法 · 大白话版</span>
+      </span>
+    </a>
+    <nav class="nav">
+      <div class="nav-label">开始</div>
+      <a class="nav-link" href="../index.html"><span class="no">⌂</span><span>首页：这份教程怎么用</span></a>
+      <div class="nav-label">第一幕 · 它是什么</div>
+      <a class="nav-link" href="01-what-is-dsh.html"><span class="no">01</span><span>一分钟看懂 dsh</span></a>
+      <a class="nav-link" href="02-plugins.html"><span class="no">02</span><span>万物皆插件（乐高积木）</span></a>
+      <a class="nav-link active" href="03-vs-claude-codex.html"><span class="no">03</span><span>和 Claude Code / Codex 比一比</span></a>
+      <div class="nav-label">第二幕 · 核心机制</div>
+      <a class="nav-link" href="04-cordis-five.html"><span class="no">04</span><span>Cordis 五件事</span></a>
+      <a class="nav-link" href="05-turn.html"><span class="no">05</span><span>一次对话的旅程（轮次）</span></a>
+      <a class="nav-link" href="06-session-log.html"><span class="no">06</span><span>会话日志：唯一真源</span></a>
+      <div class="nav-label">第三幕 · 可插拔能力</div>
+      <a class="nav-link" href="07-seam.html"><span class="no">07</span><span>能力缝：可替换的能力</span></a>
+      <a class="nav-link" href="08-tools.html"><span class="no">08</span><span>工具与执行流水线</span></a>
+      <a class="nav-link" href="09-scope.html"><span class="no">09</span><span>作用域：agent 的独立办公室</span></a>
+      <a class="nav-link" href="10-delegation.html"><span class="no">10</span><span>委派与扩展（子代理/工作流）</span></a>
+      <div class="nav-label">第四幕 · 动手与资源</div>
+      <a class="nav-link" href="11-hands-on.html"><span class="no">11</span><span>动手：跑起来 + 写插件</span></a>
+      <a class="nav-link" href="12-next.html"><span class="no">12</span><span>术语表与下一步</span></a>
+    </nav>
+    <div class="side-foot">
+      开源教程 · 基于 deepseek-harness（0.1.0-rc.5）源码与官方文档<br>
+      欢迎 <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial">Star · Issue · PR</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="打开导航">☰</button>
+      <div class="crumbs">第一幕 · 它是什么 / <b>03 和 Claude Code / Codex 比一比</b></div>
+      <div class="progress"><span id="progressText">0%</span><span class="bar"><i id="progressBar"></i></span></div>
+    </header>
+
+    <article class="content">
+
+      <div class="ch-head">
+        <div class="kicker">第一幕 · 它是什么 · 第 03 章</div>
+        <h1>和 Claude Code / Codex 比一比</h1>
+        <p class="lede">用你熟悉的工具当尺子，量一量 dsh 这把新尺子 —— 结论一句话：它们是「整车」，dsh 是「造车的平台」。</p>
+      </div>
+
+      <div class="card analogy">
+        <div class="card-title"><span class="ic">🚗</span>开场小故事：整车与造车平台</div>
+                <p>
+          你可能用过 Claude Code 或 Codex：在终端里说一句「帮我修这个 bug」，它们就会读代码、改文件、跑测试、给你汇报。很好用，对吧？像开一台调校好的跑车。
+        </p>
+        <p style="margin-bottom:0">
+          但它们有个共同点：它们是造好的整车——厂家把模型、工具、流程、界面都焊死了，你只能在预设的轨道里跑（想换发动机？门儿都没有）。而 dsh 是造车平台：底盘、发动机舱、接口都给你了，你可以造出自己的车——甚至把 Claude Code 和 Codex 当「员工」雇来干活：特斯拉干重活，法拉利跑长途，dsh 是那个排兵布阵的老板。
+        </p>
+
+      </div>
+
+      <div class="oneliner">
+        一句话讲清楚：Claude Code、Codex 是<b>面向编程场景的 agent 产品</b>（整车），
+        dsh 是<b>构建 agent 的开源框架</b>（造车平台）——
+        它默认接 DeepSeek，但模型、工具、界面、流程全都能换，
+        还能通过子代理把 Claude Code / Codex 这些「整车」变成自己的「员工」。
+      </div>
+
+      <figure class="fig">
+        <img src="../assets/img/fig-compare.svg" alt="Claude Code、Codex 与 dsh 的对比：整车 vs 平台，dsh 可把两者当子代理">
+        <figcaption><b>图 3-1</b> 左边是两台「整车」（Claude Code / Codex），右边是「造车平台」（dsh）；最下面是 dsh 的独门绝活：把整车雇成员工。</figcaption>
+      </figure>
+
+      <h2>最本质的区别：产品 vs 平台</h2>
+      <p>
+        这不是「谁更好」的问题，而是「谁是什么」的问题：
+      </p>
+      <ul>
+        <li><b>Claude Code</b>（Anthropic 出品）：一个终端里的编程 agent 产品，面向「快速在代码库上干活」；</li>
+        <li><b>Codex</b>（OpenAI 出品）：OpenAI 的编程 agent，同样面向「在代码库里完成任务」；</li>
+        <li><b>dsh</b>（DeepSeek AI 出品，MIT 开源）：一个 agent <b>框架</b> —— 它不替你决定模型、工具和界面，而是给你一套把 agent 组装起来的积木。</li>
+      </ul>
+      <p>
+        类比：Claude Code / Codex 是「相机」，dsh 是「相机制造平台」。
+        用 dsh 你能造出一台类似 Claude Code 的东西（换个 UI 外壳 + 编程工具集），
+        也能造出完全不同的东西（自动化流水线、无人值守服务、你自己的产品里的 AI 助手）。
+      </p>
+
+      <h2>一张表速览</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>维度</th><th>Claude Code</th><th>Codex</th><th>DeepSeek Harness</th></tr></thead>
+          <tbody>
+            <tr><td><b>定位</b></td><td>终端编程 agent 产品</td><td>编程 agent 产品</td><td>通用 agent 框架（平台）</td></tr>
+            <tr><td><b>默认模型</b></td><td>Claude 系列</td><td>OpenAI 系列</td><td>DeepSeek（可换任意提供方，含 OpenAI 兼容端点）</td></tr>
+            <tr><td><b>运行形态</b></td><td>CLI / 终端 / IDE 集成</td><td>CLI / IDE 集成</td><td>Web UI + headless CLI + Python/JS SDK + ACP 自动化服务器</td></tr>
+            <tr><td><b>可定制性</b></td><td>配置 + hooks 等扩展点</td><td>配置 + 扩展点</td><td>万物皆插件：模型、工具、循环、界面、审批全可替换；preset + patch 按会话组装</td></tr>
+            <tr><td><b>能否被 dsh 调用</b></td><td colspan="2">✅ 能 —— dsh 的 subagent 提供方可以委派任务给它们</td><td>——</td></tr>
+            <tr><td><b>开源</b></td><td>否（闭源产品）</td><td>否（闭源产品）</td><td>✅ MIT 开源，源码在 GitHub</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>三个最容易混淆的点</h2>
+
+      <h3>① 「dsh 是不是又一个 Claude Code？」—— 不是</h3>
+      <p>
+        dsh 里有一个 <code>agent-loop</code>（智能体循环）插件，跑起来后体验上确实像 Claude Code：
+        你发任务、它读文件、改代码、跑测试。但 Claude Code 是<b>产品</b>（用它），
+        dsh 是<b>框架</b>（用它来造/来跑自己的 agent）。dsh 附带的 Web UI 和 headless 只是
+        两个现成的「外壳」示例 —— 你可以换掉它们，或者干脆不要它们。
+      </p>
+
+      <h3>② 「dsh 能把 Claude Code / Codex 当子代理？」—— 能，这是它的独门绝活</h3>
+      <p>
+        还记得第 07 章预告的「能力缝」吗？<code>ctx.subagents</code> 这个 seam 的提供方里，
+        除了进程内的 spawn / fork，还有 <b>进程外的 ACP、Codex、Claude Code</b> 三种传输
+        （以及 dsh-sdk）。也就是说：你的 dsh agent 可以把一段任务<b>委派给真正的 Claude Code
+        或 Codex 进程</b>去执行，再把结果收回来 —— 就像项目经理把活外包给两家外包公司。
+        反过来，dsh 还有 hooks-claude-code / hooks-codex 桥接，能在它们的事件流上挂 dsh 的策略。
+      </p>
+
+      <h3>③ 「模型只能用 DeepSeek？」—— 不是</h3>
+      <p>
+        默认 profile 装的是 <code>llm-deepseek</code> 适配器，但 <code>ctx.llm</code> 是能力缝：
+        注册一个新适配器就能换模型，也支持 OpenAI 兼容的自定义端点（第 11 章的配置指南会演示）。
+        一个 dsh 实例甚至可以让不同 agent 用不同模型。
+      </p>
+
+      <div class="card notebox">
+        <div class="card-title"><span class="ic">🛒</span>选购指南：什么时候用哪个？</div>
+        <p style="margin-bottom:0">
+          · <b>就想在代码库里快速干活</b>，不想折腾 → Claude Code / Codex 开箱即用；
+          <br>· <b>想拥有自己的 agent</b>：定制工具与流程、换模型、嵌入自己的产品、跑无人值守自动化 → dsh；
+          <br>· <b>想编排多个模型 / 多家 agent</b>，让 Claude Code、Codex、DeepSeek 各干所长 → dsh（把前者当子代理）。
+        </p>
+      </div>
+
+      <h2>费曼自查</h2>
+
+      <div class="quiz-item">
+        <div class="q"><span class="qn">1</span><span>「整车 vs 造车平台」的比喻怎么用一句话讲给朋友？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：Claude Code / Codex 是造好就能开的车（面向编程的 agent 产品）；dsh 是造车的平台（开源 agent 框架）—— 你可以用它造出自己的车，也能造完全不同的东西。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">2</span><span>dsh 和 Claude Code / Codex 之间有什么「雇佣关系」？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：ctx.subagents 能力缝提供进程外的 ACP / Codex / Claude Code 传输，dsh 的主 agent 可以把任务委派给真正的 Claude Code / Codex 进程执行并收回结果；还有 hooks 桥接可以在它们的事件上挂策略。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">3</span><span>「dsh 只能用 DeepSeek 模型」对吗？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：不对。默认 profile 装的是 llm-deepseek 适配器，但 ctx.llm 是能力缝，注册新适配器即可换模型（包括 OpenAI 兼容端点），不同 agent 甚至可以用不同模型。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">4</span><span>你会在什么场景下选 dsh 而不是 Claude Code / Codex？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：开放答案。示例：要把 agent 能力嵌入自己的产品、要定制整套工具与审批流程、要编排多个模型或把 Claude Code/Codex 当子代理、要跑无人值守的自动化服务。</div>
+      </div>
+
+      <nav class="ch-nav">
+        <a href="02-plugins.html"><div class="dir">← 上一章</div><div class="ttl">02 万物皆插件（乐高积木）</div></a>
+        <a class="next" href="04-cordis-five.html"><div class="dir">下一章 →</div><div class="ttl">04 Cordis 五件事</div></a>
+      </nav>
+
+    </article>
+  </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

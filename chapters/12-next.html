@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="术语表与下一步：DeepSeek Harness 官方术语速查、源码地图与进阶路线。">
+<title>12 术语表与下一步 · DeepSeek Harness 通俗教程</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="../index.html">
+      <span class="logo">dsh</span>
+      <span>
+        <span class="title">DeepSeek Harness 教程</span><br>
+        <span class="subtitle">费曼学习法 · 大白话版</span>
+      </span>
+    </a>
+            <nav class="nav">
+      <div class="nav-label">开始</div>
+      <a class="nav-link" href="../index.html"><span class="no">⌂</span><span>首页：这份教程怎么用</span></a>
+      <div class="nav-label">第一幕 · 它是什么</div>
+      <a class="nav-link" href="01-what-is-dsh.html"><span class="no">01</span><span>一分钟看懂 dsh</span></a>
+      <a class="nav-link" href="02-plugins.html"><span class="no">02</span><span>万物皆插件（乐高积木）</span></a>
+      <a class="nav-link" href="03-vs-claude-codex.html"><span class="no">03</span><span>和 Claude Code / Codex 比一比</span></a>
+      <div class="nav-label">第二幕 · 核心机制</div>
+      <a class="nav-link" href="04-cordis-five.html"><span class="no">04</span><span>Cordis 五件事</span></a>
+      <a class="nav-link" href="05-turn.html"><span class="no">05</span><span>一次对话的旅程（轮次）</span></a>
+      <a class="nav-link" href="06-session-log.html"><span class="no">06</span><span>会话日志：唯一真源</span></a>
+      <div class="nav-label">第三幕 · 可插拔能力</div>
+      <a class="nav-link" href="07-seam.html"><span class="no">07</span><span>能力缝：可替换的能力</span></a>
+      <a class="nav-link" href="08-tools.html"><span class="no">08</span><span>工具与执行流水线</span></a>
+      <a class="nav-link" href="09-scope.html"><span class="no">09</span><span>作用域：agent 的独立办公室</span></a>
+      <a class="nav-link" href="10-delegation.html"><span class="no">10</span><span>委派与扩展（子代理/工作流）</span></a>
+      <div class="nav-label">第四幕 · 动手与资源</div>
+      <a class="nav-link" href="11-hands-on.html"><span class="no">11</span><span>动手：跑起来 + 写插件</span></a>
+      <a class="nav-link active" href="12-next.html"><span class="no">12</span><span>术语表与下一步</span></a>
+    </nav>
+    <div class="side-foot">
+      开源教程 · 基于 deepseek-harness（0.1.0-rc.5）源码与官方文档<br>
+      欢迎 <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial">Star · Issue · PR</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="打开导航">☰</button>
+            <div class="crumbs">第四幕 · 动手与资源 / <b>12 术语表与下一步</b></div>
+      <div class="progress"><span id="progressText">0%</span><span class="bar"><i id="progressBar"></i></span></div>
+    </header>
+
+    <article class="content">
+
+      <div class="ch-head">
+        <div class="kicker">第四幕 · 动手与资源 · 第 12 章</div>
+        <h1>术语表与下一步</h1>
+        <p class="lede">把十章的词收进一张表，再告诉你从哪里继续深入源码。</p>
+      </div>
+
+
+            <p>
+        十章的词都收进这张表——下次跟人聊 dsh，你也可以一边点头一边蹦术语，假装资深专家了。
+        （放心，我们全程都用大白话解释，绝不让你露馅。）
+      </p>
+      <h2>术语速查表</h2>
+      <p>（英文术语保留，中文为官方文档用词 / 本教程释义）</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>术语</th><th>一句话</th><th>章节</th></tr></thead>
+          <tbody>
+            <tr><td>Agent（智能体）</td><td>会思考、会调用工具、有独立会话的执行体</td><td>01</td></tr>
+            <tr><td>Harness（马具/框架）</td><td>让模型能干活的那套装备：工具、记忆、执行环境</td><td>01</td></tr>
+            <tr><td>Plugin（插件）</td><td>功能积木：一段挂载代码，贡献服务/事件/副作用</td><td>02、03</td></tr>
+            <tr><td>Context（上下文 ctx）</td><td>服务的容器，服务按 <code>ctx.&lt;key&gt;</code> 查找</td><td>03</td></tr>
+            <tr><td>inject</td><td>声明依赖：等依赖服务就绪才启动插件</td><td>03</td></tr>
+            <tr><td>Waterfall（瀑布式事件）</td><td>接力棒语义：监听器 next() 委托或拍板短路</td><td>03</td></tr>
+            <tr><td>Disposer（释放函数）</td><td>每个注册的撤销凭证，卸载时自动清理</td><td>03</td></tr>
+            <tr><td>Turn（轮次）</td><td>排空一次已接纳输入的全过程</td><td>04</td></tr>
+            <tr><td>Step（步骤）</td><td>一次模型请求 + 其触发的工具执行</td><td>04</td></tr>
+            <tr><td>Inbox（收件箱）</td><td>agent 的两列待处理消息队列（next-turn / next-step）</td><td>04</td></tr>
+            <tr><td>SessionEvent（会话事件）</td><td>只追加日志里的类型化条目，13 种核心变体</td><td>05</td></tr>
+            <tr><td>deriveMessages()</td><td>从日志投影出模型历史的函数</td><td>05</td></tr>
+            <tr><td>Seam（能力缝）</td><td>接口 + 实现 + 使用方的完整可替换能力</td><td>06</td></tr>
+            <tr><td>Provider（提供方）</td><td>seam 里的实现角色，可整体替换</td><td>06</td></tr>
+            <tr><td>Consumer（使用方）</td><td>注入并使用服务的插件，通常是面向模型的工具</td><td>06</td></tr>
+            <tr><td>ToolSchema / execute</td><td>工具的说明书 / 干活的手</td><td>07</td></tr>
+            <tr><td>Guard（单调守卫）</td><td>只能收窄权限、无法撤销的终审</td><td>07</td></tr>
+            <tr><td>Approval（审批）</td><td>ask → allowed-once 的一次性人类放行</td><td>07</td></tr>
+            <tr><td>Spill（溢出）</td><td>结果太大时落盘，模型只见预览 + 取回指引</td><td>07</td></tr>
+            <tr><td>Scope（作用域）</td><td>按 agent 划分的注册单位，最具体者胜出</td><td>08</td></tr>
+            <tr><td>Shadowing（遮蔽）</td><td>内层同名注册遮住外层，只影响本 agent</td><td>08</td></tr>
+            <tr><td>Preset</td><td>一份 agent.cordis.yml，常驻挂载按会话组装能力</td><td>08</td></tr>
+            <tr><td>Subagent（子代理）</td><td>独立上下文的委派对象，可一次或可延续</td><td>09</td></tr>
+            <tr><td>Workflow（工作流）</td><td>模型编写的 JS 编排脚本，大规模扇出子代理</td><td>09</td></tr>
+            <tr><td>Job（后台任务）</td><td>后台运行的工作，job_list/output/kill 管理</td><td>09</td></tr>
+            <tr><td>Skill（技能）</td><td>复用型指令（SOP），注入提示词而非动作</td><td>09</td></tr>
+            <tr><td>Goal Round</td><td>目标策略的一次续行周期，具体化为一个轮次</td><td>09</td></tr>
+            <tr><td>Profile</td><td>具名组装方案：决定叠放哪些组合包</td><td>02、10</td></tr>
+            <tr><td>Bundle（组合包）</td><td>带拼装说明书的 npm 包（dsh.bundle.patch）</td><td>02、10</td></tr>
+            <tr><td>Patch（补丁层）</td><td>贴纸图层：insert 加行 / 按 id 整块替换 config</td><td>02、10</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>一页源码地图</h2>
+      <p>（对照仓库 <code>README.md</code> 里的布局，带你认路）</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>目录</th><th>是什么</th></tr></thead>
+          <tbody>
+            <tr><td><code>vendor/</code></td><td>vendor 引入的 Cordis 源码（插件框架本体）</td></tr>
+            <tr><td><code>packages/core/</code></td><td>产品主干：session、system-prompt、tools、agent、agent-loop、scope</td></tr>
+            <tr><td><code>packages/llm/</code></td><td>模型能力：Service Definition + DeepSeek 提供方</td></tr>
+            <tr><td><code>packages/shell/</code>、<code>fs/</code>、<code>web/</code>、<code>subprocess/</code>、<code>terminal/</code></td><td>能力缝与提供方：bash、文件、网页、进程、PTY</td></tr>
+            <tr><td><code>packages/subagent/</code>、<code>workflow/</code>、<code>jobs/</code>、<code>skill/</code></td><td>委派与扩展能力</td></tr>
+            <tr><td><code>packages/session/</code></td><td>会话持久化、投影、标题、遥测</td></tr>
+            <tr><td><code>packages/bundle/</code></td><td>dsh-base / web-app / headless 三个官方组合包</td></tr>
+            <tr><td><code>packages/boot/</code></td><td>启动组装（profile 机制）</td></tr>
+            <tr><td><code>apps/</code></td><td>CLI 等应用入口</td></tr>
+            <tr><td><code>examples/</code></td><td>可运行的 cordis.yml 示例（headless-agent、web-cordis……）</td></tr>
+            <tr><td><code>docs/</code></td><td>架构、子系统、术语表、cookbook（中英双语）</td></tr>
+            <tr><td><code>.agents/notes/</code></td><td>Agent Notes：每个设计决策的「为什么」</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>官方资源</h2>
+      <ul>
+        <li>源码与发布：<a href="https://github.com/deepseek-ai/deepseek-harness">github.com/deepseek-ai/deepseek-harness</a></li>
+        <li>文档（中英双语）：仓库 <code>docs/</code>，入口 <code>docs/architecture.md</code>、<code>docs/glossary.md</code>、<code>docs/cordis-primer.md</code></li>
+        <li>反馈与讨论：<a href="https://github.com/deepseek-ai/deepseek-harness/discussions">GitHub Discussions</a></li>
+        <li>插件生态：给插件仓库加 <a href="https://github.com/topics/dsh-plugin">dsh-plugin</a> 话题</li>
+      </ul>
+
+      <h2>进阶路线（按顺序）</h2>
+      <ol>
+        <li><b>读架构</b>：<code>docs/architecture.md</code> —— 你已经有本教程的底子，这次能看懂 90%；</li>
+        <li><b>查子系统</b>：<code>docs/subsystems/</code> —— 每个子系统一页，类型定义 + 语义；</li>
+        <li><b>写插件</b>：<code>docs/cookbook/</code> —— adding-a-tool / adding-a-package / adding-an-llm-adapter 分步指南；</li>
+        <li><b>跑示例</b>：<code>examples/</code> —— 把 headless-agent、web-cordis 都跑一遍；</li>
+        <li><b>追决策</b>：<code>.agents/notes/implemented/</code> —— 每个「为什么这么设计」都有答案；</li>
+        <li><b>贡献代码</b>：读 <code>CONTRIBUTING.md</code> 和 <code>docs/development.md</code>，跑 <code>pnpm run test</code> 等门禁。</li>
+      </ol>
+
+      <div class="card checkbox">
+        <div class="card-title"><span class="ic">🎓</span>结业：费曼学习法走完四步了吗？</div>
+        <p style="margin-bottom:0">
+          ① 选概念 ✅（十章主题）→ ② 用大白话讲 ✅（类比 + 图解）→ ③ 自己复述 ✅（每章费曼自查）
+          → ④ 查漏补缺 ✅（第 11 章动手）。现在，找一个完全没读过本教程的朋友，
+          <b>把 dsh 讲给他听</b> —— 讲得通，才算真的懂。祝你玩得开心！
+        </p>
+      </div>
+
+      <nav class="ch-nav">
+        <a href="11-hands-on.html"><div class="dir">← 上一章</div><div class="ttl">动手：跑起来 + 写插件</div></a>
+        <a class="next" href="../index.html"><div class="dir">回到首页 →</div><div class="ttl">重读一遍，你会有新收获</div></a>
+      </nav>
+
+    </article>
+  </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

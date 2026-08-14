@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="会话日志：唯一真源。DeepSeek Harness 的事件溯源设计与持久化。">
+<title>06 会话日志：唯一真源 · DeepSeek Harness 通俗教程</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="../index.html">
+      <span class="logo">dsh</span>
+      <span>
+        <span class="title">DeepSeek Harness 教程</span><br>
+        <span class="subtitle">费曼学习法 · 大白话版</span>
+      </span>
+    </a>
+            <nav class="nav">
+      <div class="nav-label">开始</div>
+      <a class="nav-link" href="../index.html"><span class="no">⌂</span><span>首页：这份教程怎么用</span></a>
+      <div class="nav-label">第一幕 · 它是什么</div>
+      <a class="nav-link" href="01-what-is-dsh.html"><span class="no">01</span><span>一分钟看懂 dsh</span></a>
+      <a class="nav-link" href="02-plugins.html"><span class="no">02</span><span>万物皆插件（乐高积木）</span></a>
+      <a class="nav-link" href="03-vs-claude-codex.html"><span class="no">03</span><span>和 Claude Code / Codex 比一比</span></a>
+      <div class="nav-label">第二幕 · 核心机制</div>
+      <a class="nav-link" href="04-cordis-five.html"><span class="no">04</span><span>Cordis 五件事</span></a>
+      <a class="nav-link" href="05-turn.html"><span class="no">05</span><span>一次对话的旅程（轮次）</span></a>
+      <a class="nav-link active" href="06-session-log.html"><span class="no">06</span><span>会话日志：唯一真源</span></a>
+      <div class="nav-label">第三幕 · 可插拔能力</div>
+      <a class="nav-link" href="07-seam.html"><span class="no">07</span><span>能力缝：可替换的能力</span></a>
+      <a class="nav-link" href="08-tools.html"><span class="no">08</span><span>工具与执行流水线</span></a>
+      <a class="nav-link" href="09-scope.html"><span class="no">09</span><span>作用域：agent 的独立办公室</span></a>
+      <a class="nav-link" href="10-delegation.html"><span class="no">10</span><span>委派与扩展（子代理/工作流）</span></a>
+      <div class="nav-label">第四幕 · 动手与资源</div>
+      <a class="nav-link" href="11-hands-on.html"><span class="no">11</span><span>动手：跑起来 + 写插件</span></a>
+      <a class="nav-link" href="12-next.html"><span class="no">12</span><span>术语表与下一步</span></a>
+    </nav>
+    <div class="side-foot">
+      开源教程 · 基于 deepseek-harness（0.1.0-rc.5）源码与官方文档<br>
+      欢迎 <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial">Star · Issue · PR</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="打开导航">☰</button>
+            <div class="crumbs">第二幕 · 核心机制 / <b>06 会话日志：唯一真源</b></div>
+      <div class="progress"><span id="progressText">0%</span><span class="bar"><i id="progressBar"></i></span></div>
+    </header>
+
+    <article class="content">
+
+      <div class="ch-head">
+        <div class="kicker">第二幕 · 核心机制 · 第 06 章</div>
+        <h1>会话日志：唯一真源</h1>
+        <p class="lede">流水账 vs 余额：模型历史不单独存储，随时从日志重算。这是 dsh 最反直觉也最优雅的设计。</p>
+      </div>
+
+
+      <div class="card analogy">
+        <div class="card-title"><span class="ic">📒</span>开场小故事：流水账与余额</div>
+                <p>
+          一家小店的账本有两种记法。第一种：每天只记「今天余额 500 元」。第二种：流水账——每笔收入支出都记一行，想要余额随时加一遍。第一种省事，但老板查账时永远解释不清「昨天 500，今天怎么变 300 了」；流水账麻烦，但任何一天的任何数字都能重算出来，而且永远对得上——想对不上都难。
+        </p>
+        <p style="margin-bottom:0">
+          dsh 的会话就是一本流水账：每一次轮次、每一步、每一条消息、每个工具调用，都是一行「账」。而模型看到的历史——就像余额——从不单独存储，每次请求前现算。老板（你）随时查账，会计（dsh）永远不慌。
+        </p>
+
+      </div>
+
+      <div class="oneliner">
+        一句话讲清楚：会话日志是一份<b>只追加（append-only）</b>的类型化事件流，
+        它是会话的<b>唯一真源</b> —— 模型历史、回放、恢复、标题、遥测全部从它派生。
+      </div>
+
+      <figure class="fig">
+        <img src="../assets/img/fig-session-log.svg" alt="会话日志与派生历史的关系：流水账 vs 余额">
+        <figcaption><b>图 06-1</b> 日志（流水账）是唯一真源；模型历史（余额）由 deriveMessages() 随时重算；JSONL / SQLite 负责落盘。</figcaption>
+      </figure>
+
+      <h2>账本里记着什么？—— 13 种核心事件</h2>
+      <p>
+        每个事件带一个单调递增的 <code>seq</code>（像发票编号，中间缺号会被拒绝加载）、
+        <code>time</code> 和一个按类型区分的 <code>data</code>。核心事件共 13 种
+        （插件还可以用声明合并扩展新事件）：
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>事件</th><th>中文一句话</th></tr></thead>
+          <tbody>
+            <tr><td><code>turn/start</code> · <code>turn/end</code></td><td>打开 / 关闭一个轮次（end 带原因：完成、中止、阻塞、错误、超长、中断……）</td></tr>
+            <tr><td><code>step/start</code> · <code>step/end</code></td><td>打开 / 关闭一个步骤</td></tr>
+            <tr><td><code>user/message</code></td><td>一条模型可见的用户消息（真人输入、注入、目标续跑，source 区分来源）</td></tr>
+            <tr><td><code>assistant/chunk</code></td><td>原始流式分片 —— 保证 token 级回放保真</td></tr>
+            <tr><td><code>assistant/message</code></td><td>组装好的 assistant 消息（派生历史用它），携带用量</td></tr>
+            <tr><td><code>tool/call</code> · <code>tool/result</code></td><td>模型请求一次工具调用 / 工具完成的模型可见结果（callId 配对）</td></tr>
+            <tr><td><code>todo/write</code></td><td>待办清单的全量快照（最新写覆盖）</td></tr>
+            <tr><td><code>request/header</code></td><td>下一次请求的完整请求头快照（配置 + 提示词 + 工具 schema）</td></tr>
+            <tr><td><code>request/context</code></td><td>路由容量等元数据</td></tr>
+            <tr><td><code>session/end-seed</code></td><td>种子（恢复 / fork / 回放）的结束边界</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>deriveMessages()：从账本算余额</h2>
+      <p>
+        每次模型请求前，驱动器调用 <code>deriveMessages()</code> 把日志投影成模型历史：
+        只有三类事件会产生「消息」——<code>user/message</code>（用户消息）、
+        <code>assistant/message</code>（助手消息）、<code>tool/result</code>（变成带 tool-result 块的消息）。
+        其余事件（轮次边界、请求头、待办）不进入历史。
+      </p>
+      <p>
+        这也带来了一个优雅的副产品：<b>压缩（compaction）不用撕账本</b>。
+        上下文太长时，压缩插件在派生历史时把旧内容「划掉」换成摘要（surface replace），
+        日志本身依然完整 —— 随时还能从原始账本重新算出别的视角。
+      </p>
+
+      <div class="card termbox">
+        <div class="card-title"><span class="ic">⚖️</span>运行时不变量：模型可见 ⟺ 已记录</div>
+        <p style="margin-bottom:0">
+          「任何抵达模型请求的东西，都必须能从会话日志重建。」
+          这条不变量由运行时强制检查：如果你想给模型新增一种可见输入（比如注入一段新上下文），
+          就必须新增一个会话事件并让它在日志里可渲染。
+          换句话说：<b>每个对话请求都是日志的纯函数</b> —— 同一本账，永远算出同一个结果。
+        </p>
+      </div>
+
+      <h2>账本存在哪？—— 持久化</h2>
+      <p>
+        会话日志通过 <code>ctx.sessionPersistence</code> 这个 seam 落盘，官方提供两个后端，
+        在组合时二选一（或都装）：
+      </p>
+      <ul>
+        <li><b>JSONL</b>：每个会话一个只追加的逻辑日志文件（默认 <code>.jsonl.zstd</code> 压缩格式），
+          布局为 <code>root/--目录--/会话id/session.jsonl.zstd</code>；</li>
+        <li><b>SQLite</b>：一个数据库文件，每个事件一行
+          <code>(session_id, seq, type, time, data, …)</code>，追加即一个事务。</li>
+      </ul>
+      <p>
+        <b>崩溃恢复不撕账</b>：如果日志停在打开的 <code>turn/start</code>（没有对应 <code>turn/end</code>），
+        加载时保留全部已持久事件，并补一条合成的 <code>turn/end { kind: 'interrupted' }</code> 配平 ——
+        只丢弃从未完整写入的「撕裂尾部」。
+        另外还有一个 <code>session/flush</code> 检查点：相当于「下班前强制落账」，
+        等所有缓冲的写入真正耐久（fsync / 事务提交）后才返回。
+      </p>
+
+      <div class="card notebox">
+        <div class="card-title"><span class="ic">🎁</span>为什么这种设计「赚翻了」？</div>
+        <p style="margin-bottom:0">
+          因为<b>下游全是免费的</b>：回放（transcript）直接读日志；fork 一个会话 = 复制日志加种子前缀；
+          崩溃恢复 = 重放日志；自动标题 = 从日志折叠；遥测 = 订阅日志流。
+          dsh 没有维护一份「对话记录」加一份「模型历史」再加一份「界面缓存」—— 只有一本账，其余全是投影。
+        </p>
+      </div>
+
+      <h2>费曼自查</h2>
+
+      <div class="quiz-item">
+        <div class="q"><span class="qn">1</span><span>「唯一真源」是什么意思？模型历史为什么不算真源？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：唯一真源 = 只有会话日志这一份权威数据。模型历史只是它的投影（派生结果），不单独存储 —— 每次请求前用 deriveMessages() 从日志现算，保证永远一致、可重建。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">2</span><span>13 种核心事件里，哪三类会产生模型可见的消息？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：user/message（用户消息）、assistant/message（助手消息）、tool/result（变成带工具结果块的消息）。turn/step 边界、request/header、todo 等不进入派生历史。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">3</span><span>「模型可见 ⟺ 已记录」这条不变量对插件作者意味着什么？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：给模型新增任何可见输入，都必须同步新增一个会话事件并可从日志渲染，否则运行时检查会拒绝。它保证了「同一本账总能算出同一个对话」。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">4</span><span>崩溃恢复时遇到「账本记了一半」怎么办？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：保留全部已持久事件，丢弃从未完整写入的撕裂尾部，并补一条合成的 turn/end（kind: interrupted）配平 —— 不撕掉已记账的部分。</div>
+      </div>
+
+      <nav class="ch-nav">
+        <a href="05-turn.html"><div class="dir">← 上一章</div><div class="ttl">一次对话的旅程（轮次）</div></a>
+        <a class="next" href="07-seam.html"><div class="dir">下一章 →</div><div class="ttl">能力缝：可替换的能力</div></a>
+      </nav>
+
+    </article>
+  </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

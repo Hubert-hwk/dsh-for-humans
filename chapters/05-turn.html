@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="一次对话的旅程：DeepSeek Harness 的轮次与步骤，从输入到工具调用的完整时序。">
+<title>05 一次对话的旅程（轮次） · DeepSeek Harness 通俗教程</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="../index.html">
+      <span class="logo">dsh</span>
+      <span>
+        <span class="title">DeepSeek Harness 教程</span><br>
+        <span class="subtitle">费曼学习法 · 大白话版</span>
+      </span>
+    </a>
+            <nav class="nav">
+      <div class="nav-label">开始</div>
+      <a class="nav-link" href="../index.html"><span class="no">⌂</span><span>首页：这份教程怎么用</span></a>
+      <div class="nav-label">第一幕 · 它是什么</div>
+      <a class="nav-link" href="01-what-is-dsh.html"><span class="no">01</span><span>一分钟看懂 dsh</span></a>
+      <a class="nav-link" href="02-plugins.html"><span class="no">02</span><span>万物皆插件（乐高积木）</span></a>
+      <a class="nav-link" href="03-vs-claude-codex.html"><span class="no">03</span><span>和 Claude Code / Codex 比一比</span></a>
+      <div class="nav-label">第二幕 · 核心机制</div>
+      <a class="nav-link" href="04-cordis-five.html"><span class="no">04</span><span>Cordis 五件事</span></a>
+      <a class="nav-link active" href="05-turn.html"><span class="no">05</span><span>一次对话的旅程（轮次）</span></a>
+      <a class="nav-link" href="06-session-log.html"><span class="no">06</span><span>会话日志：唯一真源</span></a>
+      <div class="nav-label">第三幕 · 可插拔能力</div>
+      <a class="nav-link" href="07-seam.html"><span class="no">07</span><span>能力缝：可替换的能力</span></a>
+      <a class="nav-link" href="08-tools.html"><span class="no">08</span><span>工具与执行流水线</span></a>
+      <a class="nav-link" href="09-scope.html"><span class="no">09</span><span>作用域：agent 的独立办公室</span></a>
+      <a class="nav-link" href="10-delegation.html"><span class="no">10</span><span>委派与扩展（子代理/工作流）</span></a>
+      <div class="nav-label">第四幕 · 动手与资源</div>
+      <a class="nav-link" href="11-hands-on.html"><span class="no">11</span><span>动手：跑起来 + 写插件</span></a>
+      <a class="nav-link" href="12-next.html"><span class="no">12</span><span>术语表与下一步</span></a>
+    </nav>
+    <div class="side-foot">
+      开源教程 · 基于 deepseek-harness（0.1.0-rc.5）源码与官方文档<br>
+      欢迎 <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial">Star · Issue · PR</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="打开导航">☰</button>
+            <div class="crumbs">第二幕 · 核心机制 / <b>05 一次对话的旅程（轮次）</b></div>
+      <div class="progress"><span id="progressText">0%</span><span class="bar"><i id="progressBar"></i></span></div>
+    </header>
+
+    <article class="content">
+
+      <div class="ch-head">
+        <div class="kicker">第二幕 · 核心机制 · 第 05 章</div>
+        <h1>一次对话的旅程（轮次）</h1>
+        <p class="lede">你发了一句话，后台发生了什么？—— 顺着「轮次」和「步骤」把整条链路走一遍。</p>
+      </div>
+
+
+      <div class="card analogy">
+        <div class="card-title"><span class="ic">🎢</span>开场小故事：流水线上的工单</div>
+                <p>
+          想象一条流水线。你提交一张工单（一句话），工头（驱动器）开始处理它。工单可能要经历好几道工序：先问老师傅（模型）怎么看，老师傅说「先去看看那台机器」，于是工人（工具）去查看并回报；老师傅看了回报又说「再修一下」……像极了打工人的一天：一个需求反复派活、反复验收，直到老板点头。
+        </p>
+        <p style="margin-bottom:0">
+          直到老师傅说「没问题了」，这张工单才算处理完。dsh 里，处理一张工单的全过程叫轮次（turn），其中「问一次老师傅 + 老师傅派活」叫一个步骤（step）。一个轮次可以包含零个或多个步骤——没错，模型也会反复派活，这正是接下来要讲的「步骤循环」。
+        </p>
+
+      </div>
+
+      <div class="oneliner">
+        一句话讲清楚：<b>步骤</b> = 一次模型请求 + 它触发的工具执行；
+        <b>轮次</b> = 排空一次已接纳输入的全过程，在「不再欠任何工作」时结束。
+      </div>
+
+      <figure class="fig">
+        <img src="../assets/img/fig-turn.svg" alt="一次轮次的时序图：从用户输入到工具执行再到日志">
+        <figcaption><b>图 05-1</b> 左侧是驾驶舱内的流程，右侧是会话语义 —— 每一步都落到会话日志里。</figcaption>
+      </figure>
+
+      <h2>旅程详解：八站路</h2>
+
+      <h3>第 1 站 · 消息进入「收件箱」（inbox）</h3>
+      <p>
+        你发的消息、系统注入的上下文、steering（中途引导）…… 都先进入 agent 的
+        <b>收件箱</b>。收件箱有两列：<code>next-turn</code>（普通消息，会唤醒驱动器）和
+        <code>next-step</code>（下一步骤输入）。注入的上下文会安静地待在收件箱里，
+        直到别的消息把它唤醒。
+      </p>
+
+      <h3>第 2 站 · 驱动器被唤醒，打开轮次</h3>
+      <p>
+        有「唤醒级」工作到来，驱动器（agent-loop 插件）开始干活：在会话日志上写下
+        <code>turn/start</code>，然后<b>认领</b>消息（下一步骤输入 + 一个普通消息）。
+      </p>
+
+      <h3>第 3 站 · agent/pre-step：模型的「门口检查」</h3>
+      <p>
+        在模型看到任何东西之前，一个瀑布式事件 <code>agent/pre-step</code> 登场。
+        监听器可以<b>改写</b>已认领的消息，也可以<b>直接拒绝</b>本次步骤。
+        压缩、注入上下文、策略拦截都在这里发生。
+        （注：首次认领被拒绝或改写为空时，轮次也会关闭 —— 但日志会记录这次尝试。）
+      </p>
+
+      <h3>第 4 站 · 组装请求：提示词 + 工具 + 历史</h3>
+      <p>
+        驱动器写下 <code>step/start</code> 和 <code>user/message</code>，
+        然后调用 <code>ctx.systemPrompt</code> 把「提示词片段 + 工具 schema」组装起来
+        （<code>system-prompt/assemble</code> 瀑布），并从<b>会话日志</b>派生模型历史
+        （第 06 章的主角）。请求头也会被记进日志（<code>request/header</code>），
+        保证「这次请求到底发了什么」随时可重建。
+      </p>
+
+      <h3>第 5 站 · 请求模型：流式回复</h3>
+      <p>
+        <code>agent/request</code> 瀑布决定这次调用用哪个 provider/model，
+        然后 <code>llm/stream</code> 开始流式输出。<code>assistant/chunk</code> 逐片写进日志
+        （保证回放和 UI 保真），组装完成后写下 <code>assistant/message</code>。
+      </p>
+
+      <h3>第 6 站 · 工具调用（可能循环多次）</h3>
+      <p>
+        如果模型决定调用工具：<code>tool/call</code> 写日志 →
+        <code>tools/pre-execute</code>（审批、策略）→ <code>tools/execute</code>（真正执行）→
+        <code>tools/post-execute</code>（检查、溢出处理）→ <code>tool/result</code> 写日志。
+        执行细节在第 08 章展开。
+      </p>
+
+      <h3>第 7 站 · 还欠工作吗？—— 步骤循环</h3>
+      <p>
+        工具结果回到模型后，驱动器判断：模型还要求调工具？或下一步骤输入到了？
+        是 → 认领 → 回到第 3 站，开启<b>下一个步骤</b>。
+        一个轮次就是由这样一串步骤组成的。
+      </p>
+
+      <h3>第 8 站 · 轮次结束</h3>
+      <p>
+        不再欠任何工作时，<code>agent/turn-stopping</code>（serial 事件，没有 next()）
+        做最后一次检查，然后 <code>turn/end</code> 落日志，agent 状态回到 idle。
+      </p>
+
+      <h2>两类「事件」别混淆</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>类别</th><th>例子</th><th>特点</th></tr></thead>
+          <tbody>
+            <tr><td><b>持久会话事件</b></td><td><code>turn/*</code>、<code>step/*</code>、<code>user/message</code>、<code>assistant/*</code>、<code>tool/*</code></td><td>追加进会话日志，重载后依然存在 —— 「事实」</td></tr>
+            <tr><td><b>实时扩展点</b></td><td><code>agent/pre-step</code>、<code>agent/request</code>、<code>llm/stream</code>、<code>tools/*</code></td><td>只活在运行中，用于观察、拦截、改写 —— 「动作」</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        官方还有一条事件三域划分：<b>会话事件</b>（追加进日志的持久事实）、
+        <b>agent 事件</b>（<code>agent/*</code>，携带活跃 Agent：状态、收件箱、请求、错误……）、
+        <b>能力事件</b>（如 <code>fs/*</code>、<code>tools/*</code>，让策略和适配器挂到能力上而不引入循环依赖）。
+      </p>
+
+      <div class="card termbox">
+        <div class="card-title"><span class="ic">📌</span>官方术语对照</div>
+        <p style="margin-bottom:0">
+          turn = <b>轮次</b>（一次对已接纳输入的排空）；step = <b>步骤</b>（一次模型请求 + 其工具执行）；
+          Round = 外层策略的迭代（如 Goal Round，见第 10 章），<b>注意与轮次区分</b>；
+          agent loop = <b>智能体循环</b>（驱动这一切的插件）。
+        </p>
+      </div>
+
+      <h2>费曼自查</h2>
+
+      <div class="quiz-item">
+        <div class="q"><span class="qn">1</span><span>轮次和步骤的区别是什么？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：步骤 = 一次模型请求 + 它触发的工具执行；轮次 = 排空一次已接纳输入的全过程，包含零个或多个步骤。模型调用工具、工具结果回来、模型再调用……这些步骤串起来就是一个轮次。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">2</span><span>agent/pre-step 是干嘛的？监听器可以做什么？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：它是模型看到任何内容之前的瀑布式检查点。监听器可以改写已认领的消息、注入上下文，或直接拒绝本次步骤（拒绝后轮次以无步骤方式关闭并记录）。压缩策略就在这里处理上下文压力。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">3</span><span>「持久会话事件」和「实时扩展点」怎么区分？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：持久会话事件（turn/step/user/assistant/tool 等）会追加进日志、重载后仍在，是「事实」；实时扩展点（agent/pre-step、agent/request、llm/stream、tools/*）只活在运行中，用于观察和拦截，是「动作」。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">4</span><span>模型历史是怎么来的？为什么说它「不单独存储」？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：历史是每次请求前从会话日志「派生」出来的（deriveMessages），而不是单独保存的一份副本。这正是下一章的主角 —— 会话日志是唯一真源。</div>
+      </div>
+
+      <nav class="ch-nav">
+        <a href="04-cordis-five.html"><div class="dir">← 上一章</div><div class="ttl">Cordis 五件事</div></a>
+        <a class="next" href="06-session-log.html"><div class="dir">下一章 →</div><div class="ttl">会话日志：唯一真源</div></a>
+      </nav>
+
+    </article>
+  </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="万物皆插件：用乐高积木理解 DeepSeek Harness 的 profile、组合包与 patch。">
+<title>02 万物皆插件（乐高积木） · DeepSeek Harness 通俗教程</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="../index.html">
+      <span class="logo">dsh</span>
+      <span>
+        <span class="title">DeepSeek Harness 教程</span><br>
+        <span class="subtitle">费曼学习法 · 大白话版</span>
+      </span>
+    </a>
+            <nav class="nav">
+      <div class="nav-label">开始</div>
+      <a class="nav-link" href="../index.html"><span class="no">⌂</span><span>首页：这份教程怎么用</span></a>
+      <div class="nav-label">第一幕 · 它是什么</div>
+      <a class="nav-link" href="01-what-is-dsh.html"><span class="no">01</span><span>一分钟看懂 dsh</span></a>
+      <a class="nav-link active" href="02-plugins.html"><span class="no">02</span><span>万物皆插件（乐高积木）</span></a>
+      <a class="nav-link" href="03-vs-claude-codex.html"><span class="no">03</span><span>和 Claude Code / Codex 比一比</span></a>
+      <div class="nav-label">第二幕 · 核心机制</div>
+      <a class="nav-link" href="04-cordis-five.html"><span class="no">04</span><span>Cordis 五件事</span></a>
+      <a class="nav-link" href="05-turn.html"><span class="no">05</span><span>一次对话的旅程（轮次）</span></a>
+      <a class="nav-link" href="06-session-log.html"><span class="no">06</span><span>会话日志：唯一真源</span></a>
+      <div class="nav-label">第三幕 · 可插拔能力</div>
+      <a class="nav-link" href="07-seam.html"><span class="no">07</span><span>能力缝：可替换的能力</span></a>
+      <a class="nav-link" href="08-tools.html"><span class="no">08</span><span>工具与执行流水线</span></a>
+      <a class="nav-link" href="09-scope.html"><span class="no">09</span><span>作用域：agent 的独立办公室</span></a>
+      <a class="nav-link" href="10-delegation.html"><span class="no">10</span><span>委派与扩展（子代理/工作流）</span></a>
+      <div class="nav-label">第四幕 · 动手与资源</div>
+      <a class="nav-link" href="11-hands-on.html"><span class="no">11</span><span>动手：跑起来 + 写插件</span></a>
+      <a class="nav-link" href="12-next.html"><span class="no">12</span><span>术语表与下一步</span></a>
+    </nav>
+    <div class="side-foot">
+      开源教程 · 基于 deepseek-harness（0.1.0-rc.5）源码与官方文档<br>
+      欢迎 <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial">Star · Issue · PR</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="打开导航">☰</button>
+            <div class="crumbs">第一幕 · 它是什么 / <b>02 万物皆插件（乐高积木）</b></div>
+      <div class="progress"><span id="progressText">0%</span><span class="bar"><i id="progressBar"></i></span></div>
+    </header>
+
+    <article class="content">
+
+      <div class="ch-head">
+        <div class="kicker">第一幕 · 它是什么 · 第 02 章</div>
+        <h1>万物皆插件（乐高积木）</h1>
+        <p class="lede">没有「特权内核」。模型适配器、工具、会话日志、循环本身 —— 全是积木，全可替换。</p>
+      </div>
+
+
+      <div class="card analogy">
+        <div class="card-title"><span class="ic">🧱</span>开场小故事：买整机 vs 自己攒机</div>
+                <p>
+          大多数软件像「买整机」：厂家把主板、显卡、电源焊死在一起。你想换个显卡？不好意思，请换整台机器——商家最爱这种顾客。
+        </p>
+        <p style="margin-bottom:0">
+          dsh 像「乐高」：每一块功能都是一块积木——模型适配器一块、工具注册表一块、会话日志一块，连「驱动 agent 循环」本身都是一块。想换模型？换积木。想加审批？插积木。嫌内置工具碍事？拆积木。拆装之间整台机器照常运转——这才是装机佬的快乐。
+        </p>
+
+      </div>
+
+      <div class="oneliner">
+        一句话讲清楚：<b>一个运行中的 dsh 就是一棵插件树</b> ——
+        由「profile（套餐蓝图）」按顺序叠放「组合包（成套零件包）」、
+        再用「patch（贴纸图层）」微调，最终拼装出的一棵活的积木树。
+      </div>
+
+      <figure class="fig">
+        <img src="../assets/img/fig-plugin-tree.svg" alt="插件树：profile 叠加组合包与补丁，拼装成插件树">
+        <figcaption><b>图 02-1</b> 左侧是「怎么拼」（profile + bundle + patch），右侧是「拼出来什么」（一棵插件树）。</figcaption>
+      </figure>
+
+      <h2>三个关键词，一次说清</h2>
+
+      <h3>① profile —— 套餐蓝图</h3>
+      <p>
+        profile 是存放在 Harness home（默认 <code>~/.dsh</code>，可用 <code>$DSH_HOME</code> 改）里的
+        <b>具名组装方案</b>。它只回答一个问题：<b>这套机器要装哪几个零件包？</b>
+      </p>
+      <ul>
+        <li><code>dsh web</code> 用的是 <code>web</code> profile：浏览器界面版；</li>
+        <li><code>dsh --profile headless "任务"</code> 用的是 <code>headless</code> profile：命令行一次性跑任务，完全不带服务器；</li>
+        <li>你还可以创建自己的 profile：<code>dsh --profile 我的方案</code> 启动 <code>$DSH_HOME/profiles/我的方案</code>。</li>
+      </ul>
+      <p>
+        profile 目录里有自己的 <code>package.json</code>（在 <code>dsh.profile.bundles</code> 字段里列出要叠放的组合包）
+        和一个用户自己的 <code>cordis.patch.yml</code>。
+      </p>
+
+      <h3>② 组合包（bundle）—— 成套零件包</h3>
+      <p>
+        组合包是一个普通的 npm 包，但它自带「拼装说明书」：package.json 里声明
+        <code>"dsh": { "bundle": { "patch": "./cordis.patch.yml" } }</code>，
+        指向一个 <code>cordis.patch.yml</code>，里面写着要插入哪些插件行。
+      </p>
+      <p>
+        官方随发行版交付三个基础组合包：
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>组合包</th><th>装了什么</th></tr></thead>
+          <tbody>
+            <tr><td><code>dsh-base</code></td><td>每个 profile 的第一层：模型适配器、工具、持久化、沙箱与审批策略、设置、凭据、遥测。</td></tr>
+            <tr><td><code>dsh-web-app</code></td><td>在 base 之上增加浏览器应用（Web UI）。</td></tr>
+            <tr><td><code>dsh-headless</code></td><td>在 base 之上增加一次性运行器，完全不带服务器。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>③ patch —— 贴纸图层</h3>
+      <p>
+        patch 是一层「贴纸」：用 <code>insert</code> 往树上<b>加新积木</b>，
+        或者按 <code>id</code> 定位某块积木并<b>整块替换它的 config</b>（不深合并，后贴的盖先贴的）。
+      </p>
+
+      <div class="card termbox">
+        <div class="card-title"><span class="ic">🪜</span>层叠顺序（从下往上，后层盖前层）</div>
+        <p style="margin-bottom:0">
+          ① 空条目列表 → ② 每个组合包的 patch（按 profile 里 <code>bundles</code> 的顺序）→
+          ③ profile 自己的 <code>cordis.patch.yml</code> → ④ home 级 <code>$DSH_HOME/cordis.patch.yml</code> →
+          ⑤ 命令行 <code>--patch &lt;路径&gt;</code> 的覆盖层。
+          想看你机器上实际拼出了什么？<code>dsh --profile web --dump-config</code> 会把整棵树打印出来，
+          而且每一行都标注了它来自哪一层 —— 打印出的任何条目，你都能用 patch 替换。
+        </p>
+      </div>
+
+      <h2>「没有特权内核」到底牛在哪？</h2>
+      <p>
+        传统框架里总有一块「神圣不可侵犯」的核心，你想改它得 fork 整个项目。
+        dsh 的哲学是：<b>扩展 dsh 的方式就是把插件挂到其他插件旁边</b>。
+        没有需要打补丁的特权内核，所以：
+      </p>
+      <ul>
+        <li><b>换模型</b>：注册一个新适配器即可（第 03、06 章展开）；</li>
+        <li><b>改行为</b>：监听事件、替换结果，不用动循环代码；</li>
+        <li><b>卸得干净</b>：每个插件在卸载时会<b>自动撤销自己的所有注册</b>（这是 Cordis 的「可逆副作用」，下一章讲）。</li>
+      </ul>
+
+      <div class="card notebox">
+        <div class="card-title"><span class="ic">🔬</span>源码对照：dsh-base 的一行一个插件</div>
+        <p>
+          打开仓库里的 <code>packages/bundle/base/cordis.patch.yml</code>，你会看到 base 用一次
+          <code>insert</code> 把整个共享核心全部写成插件行：<code>llm</code>、<code>llm-deepseek</code>、
+          <code>tools</code>（工具注册表）、<code>tool-bash</code>、<code>tool-fs</code>、
+          <code>session</code>、<code>session-persistence-jsonl</code>、<code>sandbox</code>、
+          <code>approval</code>、<code>settings</code>、<code>credentials</code>、
+          <code>agent-loop</code>…… 连「沙箱默认模式」都是 <code>sandbox-policy</code> 插件的配置。
+          <b>没有魔法，全是行。</b>
+        </p>
+      </div>
+
+      <h2>费曼自查</h2>
+
+      <div class="quiz-item">
+        <div class="q"><span class="qn">1</span><span>profile、组合包、patch 三者分别是什么？用自己的比喻讲。</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：profile = 套餐蓝图（决定装哪几套零件）；组合包 = 成套零件包（自带拼装说明书 cordis.patch.yml）；patch = 贴纸图层（加积木 insert，或整块替换某块积木的配置）。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">2</span><span>「没有特权内核」意味着什么？举一个例子。</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：任何部分都可被插件替换。例如 agent-loop（驱动对话循环的插件）本身也只是插件，扩展包只依赖 dsh-agent 的事件和服务，不直接依赖循环实现，因此整个循环都可以换掉。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">3</span><span>用什么命令能查看自己机器上实际拼出的插件树？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：<code>dsh --profile web --dump-config</code>（或换成任意 profile 名）。它会打印完整配置树并标注每行来源。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">4</span><span>patch 的「整块替换」和「深合并」有什么区别？为什么选整块替换？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：整块替换 = 用新 config 完全顶掉旧的；深合并 = 逐字段叠加。整块替换让 patch 语义简单、可预测：后贴的贴纸完整覆盖先贴的，不会出现「想改一个字段却悄悄带上了旧字段」的意外。</div>
+      </div>
+
+      <nav class="ch-nav">
+        <a href="01-what-is-dsh.html"><div class="dir">← 上一章</div><div class="ttl">一分钟看懂 dsh</div></a>
+        <a class="next" href="03-vs-claude-codex.html"><div class="dir">下一章 →</div><div class="ttl">和 Claude Code / Codex 比一比</div></a>
+      </nav>
+
+    </article>
+  </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 470" font-family="-apple-system,'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif">
+  <defs>
+    <filter id="dShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#1f2430" flood-opacity="0.14"/>
+    </filter>
+    <marker id="dArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f4bd6"/>
+    </marker>
+    <linearGradient id="dGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2f4bd6"/>
+      <stop offset="1" stop-color="#7c5cff"/>
+    </linearGradient>
+  </defs>
+
+  <text x="430" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1f2430">🤝 一个人干不完，就招人、排班、定 SOP：委派与扩展的四种玩法</text>
+
+  <!-- 主 agent -->
+  <g filter="url(#dShadow)">
+    <rect x="330" y="62" width="200" height="92" rx="18" fill="url(#dGrad)"/>
+    <text x="430" y="98" text-anchor="middle" font-size="16" font-weight="800" fill="#ffffff">👔 主 Agent</text>
+    <text x="430" y="122" text-anchor="middle" font-size="12" fill="#e6e9ff">会思考、会调用工具</text>
+    <text x="430" y="142" text-anchor="middle" font-size="12" fill="#e6e9ff">也可以把活派出去</text>
+  </g>
+
+  <line x1="400" y1="154" x2="150" y2="212" stroke="#2f4bd6" stroke-width="2.5" marker-end="url(#dArr)"/>
+  <line x1="430" y1="154" x2="430" y2="212" stroke="#2f4bd6" stroke-width="2.5" marker-end="url(#dArr)"/>
+  <line x1="460" y1="154" x2="710" y2="212" stroke="#2f4bd6" stroke-width="2.5" marker-end="url(#dArr)"/>
+
+  <!-- subagent -->
+  <g filter="url(#dShadow)">
+    <rect x="30" y="216" width="240" height="152" rx="16" fill="#ffffff" stroke="#c6cddd"/>
+    <text x="150" y="246" text-anchor="middle" font-size="14.5" font-weight="700" fill="#1f2430">① 子代理 🧑‍💻</text>
+    <text x="150" y="272" text-anchor="middle" font-size="12" fill="#4a5266">独立上下文，干独立任务</text>
+    <text x="150" y="294" text-anchor="middle" font-size="12" fill="#4a5266">spawn / fork：进程内</text>
+    <text x="150" y="314" text-anchor="middle" font-size="12" fill="#4a5266">ACP / Codex / Claude Code</text>
+    <text x="150" y="336" text-anchor="middle" font-size="12" fill="#4a5266">send_message 续派 · interrupt 打断</text>
+    <text x="150" y="358" text-anchor="middle" font-size="11.5" fill="#e8590c">= 招实习生 / 外包</text>
+  </g>
+
+  <!-- jobs -->
+  <g filter="url(#dShadow)">
+    <rect x="310" y="216" width="240" height="152" rx="16" fill="#ffffff" stroke="#c6cddd"/>
+    <text x="430" y="246" text-anchor="middle" font-size="14.5" font-weight="700" fill="#1f2430">② 后台任务 ⏱️</text>
+    <text x="430" y="272" text-anchor="middle" font-size="12" fill="#4a5266">长时间跑的活先挂后台</text>
+    <text x="430" y="294" text-anchor="middle" font-size="12" fill="#4a5266">job_list / job_output / job_kill</text>
+    <text x="430" y="314" text-anchor="middle" font-size="12" fill="#4a5266">bash、subagent 都能排队</text>
+    <text x="430" y="358" text-anchor="middle" font-size="11.5" fill="#e8590c">= 任务队列 / 异步排班</text>
+  </g>
+
+  <!-- workflow -->
+  <g filter="url(#dShadow)">
+    <rect x="590" y="216" width="240" height="152" rx="16" fill="#ffffff" stroke="#c6cddd"/>
+    <text x="710" y="246" text-anchor="middle" font-size="14.5" font-weight="700" fill="#1f2430">③ 工作流 📜</text>
+    <text x="710" y="272" text-anchor="middle" font-size="12" fill="#4a5266">写一个 JS 编排脚本</text>
+    <text x="710" y="292" text-anchor="middle" font-size="12" fill="#4a5266">agent() / pipeline()</text>
+    <text x="710" y="310" text-anchor="middle" font-size="12" fill="#4a5266">parallel() / phase()</text>
+    <text x="710" y="332" text-anchor="middle" font-size="12" fill="#4a5266">大规模扇出才用它</text>
+    <text x="710" y="358" text-anchor="middle" font-size="11.5" fill="#e8590c">= 写批处理脚本派活</text>
+  </g>
+
+  <!-- 软能力 -->
+  <g filter="url(#dShadow)">
+    <rect x="30" y="392" width="800" height="58" rx="16" fill="#fdf0e6" stroke="#f5c6a0"/>
+    <text x="430" y="414" text-anchor="middle" font-size="13.5" font-weight="700" fill="#e8590c">🧰 别忘了配套的「软能力」</text>
+    <text x="430" y="437" text-anchor="middle" font-size="12" fill="#4a5266">skill = 岗位 SOP · goal = 项目目标（Goal Round 自动续跑） · plan = 先交方案再动手 · todo = 待办清单</text>
+  </g>
+</svg>

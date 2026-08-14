@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="动手实践：从零运行 DeepSeek Harness，写第一个插件组合包。">
+<title>11 动手：跑起来 + 写插件 · DeepSeek Harness 通俗教程</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="../index.html">
+      <span class="logo">dsh</span>
+      <span>
+        <span class="title">DeepSeek Harness 教程</span><br>
+        <span class="subtitle">费曼学习法 · 大白话版</span>
+      </span>
+    </a>
+            <nav class="nav">
+      <div class="nav-label">开始</div>
+      <a class="nav-link" href="../index.html"><span class="no">⌂</span><span>首页：这份教程怎么用</span></a>
+      <div class="nav-label">第一幕 · 它是什么</div>
+      <a class="nav-link" href="01-what-is-dsh.html"><span class="no">01</span><span>一分钟看懂 dsh</span></a>
+      <a class="nav-link" href="02-plugins.html"><span class="no">02</span><span>万物皆插件（乐高积木）</span></a>
+      <a class="nav-link" href="03-vs-claude-codex.html"><span class="no">03</span><span>和 Claude Code / Codex 比一比</span></a>
+      <div class="nav-label">第二幕 · 核心机制</div>
+      <a class="nav-link" href="04-cordis-five.html"><span class="no">04</span><span>Cordis 五件事</span></a>
+      <a class="nav-link" href="05-turn.html"><span class="no">05</span><span>一次对话的旅程（轮次）</span></a>
+      <a class="nav-link" href="06-session-log.html"><span class="no">06</span><span>会话日志：唯一真源</span></a>
+      <div class="nav-label">第三幕 · 可插拔能力</div>
+      <a class="nav-link" href="07-seam.html"><span class="no">07</span><span>能力缝：可替换的能力</span></a>
+      <a class="nav-link" href="08-tools.html"><span class="no">08</span><span>工具与执行流水线</span></a>
+      <a class="nav-link" href="09-scope.html"><span class="no">09</span><span>作用域：agent 的独立办公室</span></a>
+      <a class="nav-link" href="10-delegation.html"><span class="no">10</span><span>委派与扩展（子代理/工作流）</span></a>
+      <div class="nav-label">第四幕 · 动手与资源</div>
+      <a class="nav-link active" href="11-hands-on.html"><span class="no">11</span><span>动手：跑起来 + 写插件</span></a>
+      <a class="nav-link" href="12-next.html"><span class="no">12</span><span>术语表与下一步</span></a>
+    </nav>
+    <div class="side-foot">
+      开源教程 · 基于 deepseek-harness（0.1.0-rc.5）源码与官方文档<br>
+      欢迎 <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial">Star · Issue · PR</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="打开导航">☰</button>
+            <div class="crumbs">第四幕 · 动手与资源 / <b>11 动手：跑起来 + 写插件</b></div>
+      <div class="progress"><span id="progressText">0%</span><span class="bar"><i id="progressBar"></i></span></div>
+    </header>
+
+    <article class="content">
+
+      <div class="ch-head">
+        <div class="kicker">第四幕 · 动手与资源 · 第 11 章</div>
+        <h1>动手：跑起来 + 写插件</h1>
+        <p class="lede">前九章是「想清楚」，这一章是「做出来」。装好环境，亲手摸一遍从启动到改装的整条链路。</p>
+      </div>
+
+
+      <div class="card analogy">
+        <div class="card-title"><span class="ic">🛠️</span>开场：费曼学习法的最后一步</div>
+                <p>
+          费曼学习法讲究「查漏补缺」：讲一遍、动手做一遍，卡住的地方就是没懂的地方。这一章就是你的「动手卡点探测器」——每一步失败都会告诉你，前面哪一章还没吃透。翻译成人话：报错了别慌，那是教程在给你划重点。
+        </p>
+        <p style="margin-bottom:0">
+          另外友情提示：装环境是程序员三大幻觉之一（另外两个是「这次一定能跑通」和「再改一行就好了」）。跟着步骤走，遇到幻觉直接翻到下面「新手常见坑」。
+        </p>
+
+      </div>
+
+      <div class="oneliner">
+        一句话讲清楚：装 Node → <code>npx @deepseek-ai/dsh web</code> → 配模型密钥 → 选工作区 →
+        发任务；进阶：从源码构建、headless 跑批、写自己的组合包并用 <code>--dump-config</code> 验证。
+      </div>
+
+      <h2>第 1 步：装环境（一次就好）</h2>
+      <p>
+        需要 <b>Node.js ^22.19 或 &gt;= 24</b>（推荐用 nvm 或官网安装包），包管理器 pnpm（当前锁定 11.7.0）。
+        然后：
+      </p>
+      <div class="codeblock">
+        <div class="cb-head"><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-lang">bash</span><button class="cb-copy">复制</button></div>
+        <pre><code>node -v   # 确认版本
+npm i -g pnpm   # 装 pnpm（可选，只用 npx 可以跳过）</code></pre>
+      </div>
+
+      <h2>第 2 步：一条命令启动 Web UI（最快路径）</h2>
+      <div class="codeblock">
+        <div class="cb-head"><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-lang">bash</span><button class="cb-copy">复制</button></div>
+        <pre><code>npx @deepseek-ai/dsh web
+# 浏览器打开 http://127.0.0.1:3080</code></pre>
+      </div>
+      <p>然后按界面提示走三步：</p>
+      <ol>
+        <li><b>设置 → 模型</b>：输入 DeepSeek API 密钥并保存（密钥只写不读，存在 <code>$DSH_HOME/.credentials.yaml</code>，配置里只有凭据引用）；</li>
+        <li><b>选择工作区</b>：添加你启动 dsh 时所在的项目目录并选中（不选工作区，输入框不可用）；</li>
+        <li><b>发一个任务</b>：例如 <i>「Summarize this repository and identify its main packages.」</i>
+          —— 观察它读文件、跑命令、需要审批时弹出确认。</li>
+      </ol>
+
+      <h2>第 3 步：从源码跑（探索源码的姿势）</h2>
+      <div class="codeblock">
+        <div class="cb-head"><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-lang">bash</span><button class="cb-copy">复制</button></div>
+        <pre><code>git clone https://github.com/deepseek-ai/deepseek-harness.git
+cd deepseek-harness
+pnpm install
+pnpm run build          # 生产运行必须先 build
+pnpm dsh web            # 等价于 node --import tsx/esm apps/cli/src/bin.ts web</code></pre>
+      </div>
+      <p>
+        真实模型演示需要 <code>DEEPSEEK_API_KEY</code>（根目录 <code>.env</code> 或环境变量）。
+        不带密钥也能启动 —— 只是模型调用会失败。
+      </p>
+
+      <h2>第 4 步：headless —— 命令行一次性跑任务</h2>
+      <div class="codeblock">
+        <div class="cb-head"><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-lang">bash</span><button class="cb-copy">复制</button></div>
+        <pre><code>pnpm dsh --profile headless "统计一下这个仓库的 packages 数量"
+
+# 常用调试命令：
+pnpm dsh --profile web --dump-config     # 打印实际拼出的插件树（标注每行来源）
+pnpm dsh --profile headless --dump-config</code></pre>
+      </div>
+      <p>
+        headless profile 新建一个持久化会话、跑完任务、打印最终答案后退出（成功=0，失败=1），
+        完全不带服务器。配合 <code>--dump-config</code>，你可以亲手验证第 02 章的「层叠顺序」。
+      </p>
+
+      <h2>第 5 步：写第一个组合包（bundle）</h2>
+      <p>
+        理论（第 02 章）说：组合包 = 一个 npm 包 + 一份 <code>cordis.patch.yml</code>。
+        现在就做一个。新建一个目录：
+      </p>
+      <div class="codeblock">
+        <div class="cb-head"><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-lang">bash</span><button class="cb-copy">复制</button></div>
+        <pre><code>mkdir my-bundle && cd my-bundle && pnpm init -y</code></pre>
+      </div>
+      <p>在 <code>package.json</code> 里声明 bundle 身份：</p>
+      <div class="codeblock">
+        <div class="cb-head"><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-lang">json</span><button class="cb-copy">复制</button></div>
+        <pre><code>{
+  "name": "my-bundle",
+  "version": "0.1.0",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}</code></pre>
+      </div>
+      <p>在同目录写 <code>cordis.patch.yml</code> —— 给插件树插入一行新插件：</p>
+      <div class="codeblock">
+        <div class="cb-head"><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-lang">yaml</span><button class="cb-copy">复制</button></div>
+        <pre><code>- insert:
+    - id: my-plugin
+      name: my-plugin-package   # 换成真实存在的插件包名</code></pre>
+      </div>
+      <p>把它装进一个 profile 并验证：</p>
+      <div class="codeblock">
+        <div class="cb-head"><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-lang">bash</span><button class="cb-copy">复制</button></div>
+        <pre><code>dsh plugin --profile my-profile add my-bundle   # 转调 pnpm 安装，自动进 dsh.profile.bundles
+dsh --profile my-profile --dump-config           # 能看到 my-plugin 那一行</code></pre>
+      </div>
+
+      <h2>读一个真实 cordis.yml</h2>
+      <p>
+        仓库里 <code>examples/headless-agent/cordis.yml</code> 是教科书式的装配清单，
+        摘录并注释如下（密钥经 credentials 逐请求解析，文件里不内联任何 key）：
+      </p>
+      <div class="codeblock">
+        <div class="cb-head"><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-lang">yaml</span><button class="cb-copy">复制</button></div>
+        <pre><code># 每行 = 一个插件实例：id 唯一标识，name 是包名，config 是它的参数
+- id: settings          # 用户设置：读 $DSH_HOME/settings.yaml，热重载
+  name: '@deepseek-ai/dsh-settings-file'
+- id: credentials       # 凭据：环境变量 > $DSH_HOME/.credentials.yaml
+  name: '@deepseek-ai/dsh-credentials-local'
+- id: llm-deepseek      # DeepSeek 模型适配器
+  name: '@deepseek-ai/dsh-llm-deepseek'
+  config:
+    thinking: enabled
+    reasoningEffort: max
+    models:
+      - id: deepseek-v4-pro
+        contextWindow: 128000
+- id: bash              # bash 执行器（60s 超时）
+  name: '@deepseek-ai/dsh-bash-local'
+  config: { timeoutMs: 60000 }
+- id: agent-spine       # 预建 main agent：provider / model / cwd / persona
+  name: '@deepseek-ai/dsh-agent-spine-demo'
+  config:
+    agents:
+      - id: main
+        provider: deepseek-official
+        model: deepseek-v4-flash
+        cwd: !!js process.cwd()
+- id: persistence       # JSONL 会话落盘到 ./.sessions
+  name: '@deepseek-ai/dsh-session-persistence-jsonl'
+  config: { root: './.sessions' }
+- id: compaction-basic  # 上下文逼近阈值时自动压缩（thresholdRatio 0.8）
+  name: '@deepseek-ai/dsh-compaction-basic'</code></pre>
+      </div>
+
+      <div class="card warnbox">
+        <div class="card-title"><span class="ic">⚠️</span>新手常见坑</div>
+        <p style="margin-bottom:0">
+          ① Node 版本不够（&lt; 22.19）—— 装新版本；② 忘记配 API Key —— 模型调用会 401；
+          ③ 从源码跑但没 <code>pnpm run build</code> —— 生产入口找不到构建产物；
+          ④ patch 想「改一个字段」却整块替换了 config —— 记住 patch 是整块替换不深合并；
+          ⑤ <code>--patch</code> 是启动参数，要放在命令靠前位置。
+        </p>
+      </div>
+
+      <h2>费曼自查</h2>
+
+      <div class="quiz-item">
+        <div class="q"><span class="qn">1</span><span>不装任何东西，最快怎么体验 dsh？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：装好 Node.js 后执行 `npx @deepseek-ai/dsh web`，打开 http://127.0.0.1:3080，在设置里填入 DeepSeek API Key，选择工作区后发任务。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">2</span><span>用什么命令能验证「我的 patch 生效了」？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：`dsh --profile &lt;名字&gt; --dump-config` —— 打印完整配置树并标注每行来源，能看到你的插件行和配置。它不启动应用，只是查看。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">3</span><span>一个组合包需要哪两个文件？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：package.json（声明 "dsh": {"bundle": {"patch": "./cordis.patch.yml"}}）和 cordis.patch.yml（写 insert 或按 id 替换的插件行）。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">4</span><span>headless 模式适合什么场景？它和 web 模式的区别？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：headless 不带服务器，新建持久化会话跑完任务打印答案退出，适合脚本与自动化；web 模式带浏览器界面（默认 3080），适合人机协作。两者共用 base 组合包和同一棵插件树。</div>
+      </div>
+
+      <nav class="ch-nav">
+        <a href="10-delegation.html"><div class="dir">← 上一章</div><div class="ttl">委派与扩展（子代理/工作流）</div></a>
+        <a class="next" href="12-next.html"><div class="dir">下一章 →</div><div class="ttl">术语表与下一步</div></a>
+      </nav>
+
+    </article>
+  </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

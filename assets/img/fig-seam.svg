@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 470" font-family="-apple-system,'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif">
+  <defs>
+    <filter id="mShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#1f2430" flood-opacity="0.13"/>
+    </filter>
+    <marker id="mArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f4bd6"/>
+    </marker>
+  </defs>
+
+  <text x="430" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1f2430">🔌 能力缝（seam）：接口、实现、使用方 —— 换一个实现，整个产品跟着变</text>
+
+  <!-- 接口（上） -->
+  <g filter="url(#mShadow)">
+    <rect x="310" y="66" width="240" height="92" rx="14" fill="#2f4bd6"/>
+    <text x="430" y="94" text-anchor="middle" font-size="15" font-weight="800" fill="#ffffff">① Service Definition</text>
+    <text x="430" y="118" text-anchor="middle" font-size="12" fill="#d5ddff">接口 · 插座规格</text>
+    <text x="430" y="140" text-anchor="middle" font-size="12" fill="#d5ddff">声明 ctx.shell 能做什么</text>
+    <line x1="430" y1="158" x2="430" y2="198" stroke="#2f4bd6" stroke-width="2.5" marker-end="url(#mArr)"/>
+    <line x1="352" y1="158" x2="284" y2="198" stroke="#2f4bd6" stroke-width="2.5" marker-end="url(#mArr)"/>
+    <line x1="508" y1="158" x2="576" y2="198" stroke="#2f4bd6" stroke-width="2.5" marker-end="url(#mArr)"/>
+  </g>
+
+  <!-- 实现（左下） -->
+  <g filter="url(#mShadow)">
+    <rect x="60" y="202" width="250" height="96" rx="14" fill="#ffffff" stroke="#c6cddd"/>
+    <text x="185" y="232" text-anchor="middle" font-size="14.5" font-weight="700" fill="#1f2430">② Service Provider</text>
+    <text x="185" y="256" text-anchor="middle" font-size="12" fill="#4a5266">🔌 bash-local（本机执行）</text>
+    <text x="185" y="278" text-anchor="middle" font-size="12" fill="#4a5266">🔌 bash-sandbox（沙箱执行）</text>
+  </g>
+
+  <!-- 使用方（右下） -->
+  <g filter="url(#mShadow)">
+    <rect x="550" y="202" width="250" height="96" rx="14" fill="#ffffff" stroke="#c6cddd"/>
+    <text x="675" y="232" text-anchor="middle" font-size="14.5" font-weight="700" fill="#1f2430">③ Consumer</text>
+    <text x="675" y="256" text-anchor="middle" font-size="12" fill="#4a5266">💻 tool-bash（面向模型的工具）</text>
+    <text x="675" y="278" text-anchor="middle" font-size="12" fill="#4a5266">🔗 hooks 桥接也消费它</text>
+  </g>
+
+  <!-- 底部：替换效果 -->
+  <g filter="url(#mShadow)">
+    <rect x="60" y="330" width="740" height="100" rx="16" fill="#fdf0e6" stroke="#f5c6a0"/>
+    <text x="430" y="358" text-anchor="middle" font-size="14.5" font-weight="700" fill="#e8590c">🪄 换成远程沙箱后会发生什么？</text>
+    <text x="430" y="384" text-anchor="middle" font-size="13" fill="#4a5266">Bash、PTY 终端、LSP、子进程 —— 这些消费方一行都不用改，</text>
+    <text x="430" y="406" text-anchor="middle" font-size="13" fill="#4a5266">执行环境就从「你的电脑」整体搬到「云端沙箱」。</text>
+  </g>
+
+  <text x="430" y="456" text-anchor="middle" font-size="12.5" fill="#7a8296">同理：ctx.fs（本地/沙箱/E2B）、ctx.subagents（进程内/ACP/Codex/Claude Code）、ctx.web（多家搜索）……</text>
+</svg>

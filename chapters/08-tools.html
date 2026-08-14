@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="工具与执行流水线：DeepSeek Harness 中模型的手、安检通道、审批与溢出处理。">
+<title>08 工具与执行流水线 · DeepSeek Harness 通俗教程</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="../index.html">
+      <span class="logo">dsh</span>
+      <span>
+        <span class="title">DeepSeek Harness 教程</span><br>
+        <span class="subtitle">费曼学习法 · 大白话版</span>
+      </span>
+    </a>
+            <nav class="nav">
+      <div class="nav-label">开始</div>
+      <a class="nav-link" href="../index.html"><span class="no">⌂</span><span>首页：这份教程怎么用</span></a>
+      <div class="nav-label">第一幕 · 它是什么</div>
+      <a class="nav-link" href="01-what-is-dsh.html"><span class="no">01</span><span>一分钟看懂 dsh</span></a>
+      <a class="nav-link" href="02-plugins.html"><span class="no">02</span><span>万物皆插件（乐高积木）</span></a>
+      <a class="nav-link" href="03-vs-claude-codex.html"><span class="no">03</span><span>和 Claude Code / Codex 比一比</span></a>
+      <div class="nav-label">第二幕 · 核心机制</div>
+      <a class="nav-link" href="04-cordis-five.html"><span class="no">04</span><span>Cordis 五件事</span></a>
+      <a class="nav-link" href="05-turn.html"><span class="no">05</span><span>一次对话的旅程（轮次）</span></a>
+      <a class="nav-link" href="06-session-log.html"><span class="no">06</span><span>会话日志：唯一真源</span></a>
+      <div class="nav-label">第三幕 · 可插拔能力</div>
+      <a class="nav-link" href="07-seam.html"><span class="no">07</span><span>能力缝：可替换的能力</span></a>
+      <a class="nav-link active" href="08-tools.html"><span class="no">08</span><span>工具与执行流水线</span></a>
+      <a class="nav-link" href="09-scope.html"><span class="no">09</span><span>作用域：agent 的独立办公室</span></a>
+      <a class="nav-link" href="10-delegation.html"><span class="no">10</span><span>委派与扩展（子代理/工作流）</span></a>
+      <div class="nav-label">第四幕 · 动手与资源</div>
+      <a class="nav-link" href="11-hands-on.html"><span class="no">11</span><span>动手：跑起来 + 写插件</span></a>
+      <a class="nav-link" href="12-next.html"><span class="no">12</span><span>术语表与下一步</span></a>
+    </nav>
+    <div class="side-foot">
+      开源教程 · 基于 deepseek-harness（0.1.0-rc.5）源码与官方文档<br>
+      欢迎 <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial">Star · Issue · PR</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="打开导航">☰</button>
+            <div class="crumbs">第三幕 · 可插拔能力 / <b>08 工具与执行流水线</b></div>
+      <div class="progress"><span id="progressText">0%</span><span class="bar"><i id="progressBar"></i></span></div>
+    </header>
+
+    <article class="content">
+
+      <div class="ch-head">
+        <div class="kicker">第三幕 · 可插拔能力 · 第 08 章</div>
+        <h1>工具与执行流水线</h1>
+        <p class="lede">工具是模型的手。每次动手都要过「安检通道」：审批、守卫、溢出处理 —— 一个不少。</p>
+      </div>
+
+
+      <div class="card analogy">
+        <div class="card-title"><span class="ic">🖐️</span>开场小故事：说明书 + 一双手</div>
+                <p>
+          模型想读文件，但它不知道你的文件系统长什么样。于是 dsh 给它两样东西：一张说明书（ToolSchema）：工具叫什么、干什么用、参数怎么填——模型照着说明书「点菜」；一双干活的手（execute 函数）：真正去读文件、跑命令——由 dsh 的插件实现。
+        </p>
+        <p style="margin-bottom:0">
+          关键原则：说明书会给模型看，手永远在框架这边。你见过让顾客自己进厨房炒菜的吗？模型也一样——它能点菜（调用工具），但锅铲（执行）绝不递到它手里。
+        </p>
+
+      </div>
+
+      <div class="oneliner">
+        一句话讲清楚：<b>工具 = 说明书 + 执行函数</b>；
+        每次工具调用都会走一条固定的<b>执行流水线</b>（安检 → 干活 → 质检），
+        插件可以在流水线的每个环节插入自己的策略。
+      </div>
+
+      <h2>一个工具长什么样？</h2>
+      <p>
+        插件作者用 <code>defineTool</code> 这个类型化助手来定义工具 ——
+        它帮你校验参数、推导返回值类型，写起来很舒服。这是官方 README 里的 <code>read_file</code> 例子
+        （出处：<code>packages/core/tools/README.md</code>）：
+      </p>
+      <div class="codeblock">
+        <div class="cb-head"><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-lang">ts</span><button class="cb-copy">复制</button></div>
+        <pre><code>ctx.tools.register(defineTool({
+  name: 'read_file',
+  description: 'Read a file from disk.',
+  parameters: {
+    path: { type: 'string', required: true, description: 'Absolute file path' },
+    offset: { type: 'number' },
+    limit: { type: 'number' },
+  },
+  output: {
+    schema: { type: 'string' },
+    render: (_args, value) => [{ type: 'text', text: value }],
+  },
+  async execute(args, exec) {
+    return readFile(args.path, { encoding: 'utf8', signal: exec.signal })
+  },
+}))</code></pre>
+      </div>
+      <p>
+        注意：注册表暴露给模型的只有 <code>name / description / parameters</code>；
+        <code>execute</code>、<code>output</code>、超时等执行细节<b>绝不会泄漏到模型请求里</b>。
+        参数不匹配会抛 <code>INVALID_ARGS</code>，输出不符合声明会抛 <code>INVALID_TOOL_OUTPUT</code> —— 错得明明白白。
+      </p>
+
+      <h2>执行流水线：安检通道</h2>
+
+      <figure class="fig">
+        <img src="../assets/img/fig-tool-pipeline.svg" alt="工具执行流水线：pre-execute、守卫与审批、execute、post-execute">
+        <figcaption><b>图 08-1</b> 一次工具调用依次通过：策略前处理 → 单调守卫（+审批）→ 环绕分派 → 策略后处理 → 结果落日志。</figcaption>
+      </figure>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>环节</th><th>谁参与</th><th>干什么</th></tr></thead>
+          <tbody>
+            <tr><td><code>tools/pre-execute</code></td><td>策略监听器</td><td>瀑布式表态：<b>allow（放行）/ deny（拒绝）/ ask（询问）</b>。参数不可改写（历史、审计、UI、执行必须一致）。</td></tr>
+            <tr><td>单调守卫（guard）</td><td>注册的守卫</td><td>只能<b>收窄</b>权限，后续监听器无法撤销 —— 一票否决终审。</td></tr>
+            <tr><td><code>tools/execute</code></td><td>环绕包装层</td><td>真正执行。超时、重试、指标插件在这里包装；只有它有权替换执行信号。</td></tr>
+            <tr><td><code>tools/post-execute</code></td><td>检查监听器</td><td>检查 / 替换结果：accept（改内容或值）或 block（转 isError + 纠正反馈）。</td></tr>
+            <tr><td><code>finalizeContent</code></td><td>工具定义本身</td><td>定义自有的最后一道同步内容变换，恰好调用一次。</td></tr>
+            <tr><td><code>tools/result</code></td><td>只读观测</td><td>冻结的权威结果，写日志，供 UI 等消费。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>审批（approval）：门卫在哪里？</h3>
+      <p>
+        pre-execute 里监听器表态 <code>ask</code> 后，会走 <code>ctx.approval</code>
+        这个 seam 做一次性询问：只有 <code>allowed-once</code> 才继续执行；
+        未授权、没有审批通道或没有 agent 的请求一律变成拒绝。
+        审批策略是 <code>ask</code>（默认，问人）或 <code>never</code>（确定性拒绝，比如 headless 场景）。
+        沙箱权限升级（比如要跑更宽权限的命令）也是在这里先获得一次性批准。
+      </p>
+
+      <h3>spill：结果太大放不进对话</h3>
+      <p>
+        工具输出特别大时（比如整个文件），<code>dsh-spill-policy</code> 在 post-execute 里介入：
+        完整文本存入 <code>ctx.spillStore</code>，模型只看到「有界首尾预览 + 存放位置 + 取回指引」，
+        需要时可以再读。就像仓库放不下时先入冷库，只给一张索引卡。
+      </p>
+
+      <h3>沙箱在哪介入？</h3>
+      <p>
+        在<b>执行器层</b>：bash-sandbox 在真正 spawn 进程时按策略包装 argv、限制文件效果。
+        它是「执行事实」的约束者，不是流水线里的策略节点 —— 所以审计日志看到的
+        <code>tool/result</code> 是执行后的真实结果。
+      </p>
+
+      <h2>内置工具速览</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>工具</th><th>一句话</th></tr></thead>
+          <tbody>
+            <tr><td><code>bash</code> / <code>pwsh</code></td><td>执行 shell 命令（每次全新进程）</td></tr>
+            <tr><td><code>read / read_image / write / edit</code></td><td>行号分页读文件、读图、写文件、字面量编辑（默认先读后写策略）</td></tr>
+            <tr><td><code>glob / grep</code></td><td>ripgrep 驱动的文件发现与内容搜索</td></tr>
+            <tr><td><code>terminal_open / send / read / …</code></td><td>持久 PTY 终端会话</td></tr>
+            <tr><td><code>web_search / web_fetch</code></td><td>网页搜索与抓取</td></tr>
+            <tr><td><code>ask_user_question</code></td><td>向人类提问，暂停调用直到回答</td></tr>
+            <tr><td><code>todo_write</code></td><td>任务清单，UI 渲染为 checklist</td></tr>
+            <tr><td><code>subagent / subagent_fork</code> 等</td><td>委派子代理（第 10 章）</td></tr>
+            <tr><td><code>workflow</code> / <code>ralph</code></td><td>多阶段编排脚本 / 每轮全新子代理循环</td></tr>
+            <tr><td><code>skill</code></td><td>加载技能指令（SOP）</td></tr>
+            <tr><td><code>job_kill / job_list / job_output</code></td><td>通用后台任务控制</td></tr>
+            <tr><td><code>create_goal / get_goal / update_goal</code></td><td>持久目标管理</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card notebox">
+        <div class="card-title"><span class="ic">💡</span>给插件作者的一句话</div>
+        <p style="margin-bottom:0">
+          想让某个工具在特定 agent 下不可见？用 restriction（第 09 章）。
+          想在执行前后加策略？监听 <code>tools/*</code> 事件。参数一致性是硬约束：
+          任何监听器都<b>不能改写参数</b> —— 历史、审计、UI 与执行必须看到同一个调用。
+        </p>
+      </div>
+
+      <h2>费曼自查</h2>
+
+      <div class="quiz-item">
+        <div class="q"><span class="qn">1</span><span>ToolSchema 和 execute 的关系？模型能看到哪个？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：ToolSchema 是面向模型的说明书（名字/描述/参数），execute 是执行函数（干活的手）。模型只看到 schema，永远碰不到 execute 的实现细节。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">2</span><span>工具调用会依次经过哪些环节？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：tools/pre-execute（放行/拒绝/询问）→ 单调守卫 → tools/execute（真正执行）→ tools/post-execute（检查/替换结果）→ finalizeContent（定义自有变换）→ tools/result（冻结结果落日志）。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">3</span><span>「单调守卫」为什么只能收窄不能放开？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：保证安全策略只能越收越紧 —— 后面的监听器无法撤销前面守卫做出的拒绝/限制，防止「绕过一个守卫就把权限放开」的漏洞。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">4</span><span>spill 是什么？模型看到什么、看不到什么？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：工具结果太大时，完整文本存入 spillStore，模型只看到有界首尾预览 + 位置 + 取回指引，需要时再读。这是 post-execute 环节的策略。</div>
+      </div>
+
+      <nav class="ch-nav">
+        <a href="07-seam.html"><div class="dir">← 上一章</div><div class="ttl">能力缝：可替换的能力</div></a>
+        <a class="next" href="09-scope.html"><div class="dir">下一章 →</div><div class="ttl">作用域：agent 的独立办公室</div></a>
+      </nav>
+
+    </article>
+  </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

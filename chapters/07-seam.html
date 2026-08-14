@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="能力缝：DeepSeek Harness 中接口、实现、使用方三角色的可替换能力设计。">
+<title>07 能力缝：可替换的能力 · DeepSeek Harness 通俗教程</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="../index.html">
+      <span class="logo">dsh</span>
+      <span>
+        <span class="title">DeepSeek Harness 教程</span><br>
+        <span class="subtitle">费曼学习法 · 大白话版</span>
+      </span>
+    </a>
+            <nav class="nav">
+      <div class="nav-label">开始</div>
+      <a class="nav-link" href="../index.html"><span class="no">⌂</span><span>首页：这份教程怎么用</span></a>
+      <div class="nav-label">第一幕 · 它是什么</div>
+      <a class="nav-link" href="01-what-is-dsh.html"><span class="no">01</span><span>一分钟看懂 dsh</span></a>
+      <a class="nav-link" href="02-plugins.html"><span class="no">02</span><span>万物皆插件（乐高积木）</span></a>
+      <a class="nav-link" href="03-vs-claude-codex.html"><span class="no">03</span><span>和 Claude Code / Codex 比一比</span></a>
+      <div class="nav-label">第二幕 · 核心机制</div>
+      <a class="nav-link" href="04-cordis-five.html"><span class="no">04</span><span>Cordis 五件事</span></a>
+      <a class="nav-link" href="05-turn.html"><span class="no">05</span><span>一次对话的旅程（轮次）</span></a>
+      <a class="nav-link" href="06-session-log.html"><span class="no">06</span><span>会话日志：唯一真源</span></a>
+      <div class="nav-label">第三幕 · 可插拔能力</div>
+      <a class="nav-link active" href="07-seam.html"><span class="no">07</span><span>能力缝：可替换的能力</span></a>
+      <a class="nav-link" href="08-tools.html"><span class="no">08</span><span>工具与执行流水线</span></a>
+      <a class="nav-link" href="09-scope.html"><span class="no">09</span><span>作用域：agent 的独立办公室</span></a>
+      <a class="nav-link" href="10-delegation.html"><span class="no">10</span><span>委派与扩展（子代理/工作流）</span></a>
+      <div class="nav-label">第四幕 · 动手与资源</div>
+      <a class="nav-link" href="11-hands-on.html"><span class="no">11</span><span>动手：跑起来 + 写插件</span></a>
+      <a class="nav-link" href="12-next.html"><span class="no">12</span><span>术语表与下一步</span></a>
+    </nav>
+    <div class="side-foot">
+      开源教程 · 基于 deepseek-harness（0.1.0-rc.5）源码与官方文档<br>
+      欢迎 <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial">Star · Issue · PR</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="打开导航">☰</button>
+            <div class="crumbs">第三幕 · 可插拔能力 / <b>07 能力缝：可替换的能力</b></div>
+      <div class="progress"><span id="progressText">0%</span><span class="bar"><i id="progressBar"></i></span></div>
+    </header>
+
+    <article class="content">
+
+      <div class="ch-head">
+        <div class="kicker">第三幕 · 可插拔能力 · 第 07 章</div>
+        <h1>能力缝：可替换的能力</h1>
+        <p class="lede">接口、实现、使用方三件套。换一个实现，整个产品跟着变 —— 这是 dsh 魔法的真正来源。</p>
+      </div>
+
+
+      <div class="card analogy">
+        <div class="card-title"><span class="ic">🔌</span>开场小故事：插座与插头</div>
+                <p>
+          你的笔记本电源适配器坏了。你不需要换电脑，只需要买一个「同规格的适配器」。因为接口是标准的：插头、电压、电流都约定好了——这就是为什么你可以借同事的充电器救急，而不是把整台电脑扔进垃圾桶。
+        </p>
+        <p style="margin-bottom:0">
+          dsh 里每一类可替换能力都遵循同样的思路，并且给它起了一个专门的词：seam（能力缝）。seam 是「可替换能力的完整三件套」——少了任何一件，都不叫 seam：就像充电器少一个脚，插不进任何插座。
+        </p>
+
+      </div>
+
+      <div class="oneliner">
+        一句话讲清楚：一个 <b>seam</b> 包含三种角色 ——
+        <b>Service Definition</b>（声明接口）、<b>Service Provider</b>（实现它）、
+        <b>Consumer</b>（使用它）；<b>替换提供方 = 替换整个能力</b>，而所有使用方一行都不用改。
+      </div>
+
+      <figure class="fig">
+        <img src="../assets/img/fig-seam.svg" alt="能力缝三角色：接口、实现、使用方">
+        <figcaption><b>图 07-1</b> 以 bash 执行能力为例：定义接口的是 dsh-shell，实现它的是 bash-local / bash-sandbox，使用它的是 tool-bash 等消费方。</figcaption>
+      </figure>
+
+      <h2>三件套拆开看</h2>
+
+      <h3>① Service Definition —— 接口</h3>
+      <p>
+        拥有自己的 <code>ctx.&lt;key&gt;</code> 和类型词汇的 Cordis 服务（注意：是 Cordis Service，
+        不是 TypeScript interface）。它回答「这项能力长什么样、能做什么」。
+        例如 <code>ctx.shell</code> 声明「bash 执行器」应该提供什么。
+      </p>
+
+      <h3>② Service Provider —— 实现</h3>
+      <p>
+        真正干活的实现，通常不止一个：<code>ctx.shell</code> 有 <code>dsh-bash-local</code>
+        （本机执行）和 <code>dsh-bash-sandbox</code>（沙箱执行），
+        还有 Windows 的 <code>dsh-pwsh-local</code>（PowerShell）。
+      </p>
+
+      <h3>③ Consumer —— 使用方</h3>
+      <p>
+        注入并使用该服务的插件，通常是面向模型的工具：
+        <code>dsh-tool-bash</code> 让模型能跑 bash 命令；hooks 桥接（Claude Code / Codex）也消费它。
+      </p>
+
+      <div class="card termbox">
+        <div class="card-title"><span class="ic">⚠️</span>官方特别提醒</div>
+        <p style="margin-bottom:0">
+          <b>seam 是完整能力，绝不是其中一个角色。</b>
+          术语「seam」只保留这个含义；成员应该按角色、类、服务来命名。
+          一个包也可以同时承担多个角色 —— 比如 <code>dsh-llm</code> 同时是 Service Definition 和 Consumer。
+        </p>
+      </div>
+
+      <h2>换一个提供方，世界就变了</h2>
+      <p>
+        这就是 dsh 最迷人的地方：<b>文件系统与进程提供方共享同一个执行世界</b>。
+        把 <code>ctx.fs</code>、<code>ctx.subprocess</code> 的实现从「本地」换成「E2B 远程沙箱」，
+        那么基于它们构建的 Bash、PTY 终端、LSP 语言服务器 —— 全部一起搬到了远程 Linux 环境，
+        <b>不需要任何提供方专用的 fork，消费方一行不改</b>。
+      </p>
+      <p>
+        类似的 seam 遍布全产品：
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ctx 键</th><th>能力</th><th>提供方示例</th></tr></thead>
+          <tbody>
+            <tr><td><code>ctx.llm</code></td><td>模型适配</td><td>llm-deepseek（DeepSeek）、llm-pi-ai，以及测试用的 llm-replay</td></tr>
+            <tr><td><code>ctx.fs</code></td><td>文件系统</td><td>fs-local（本地）、fs-sandbox（受限）、fs-e2b（远程）</td></tr>
+            <tr><td><code>ctx.subprocess</code></td><td>子进程</td><td>subprocess-local、subprocess-e2b</td></tr>
+            <tr><td><code>ctx.subagents</code></td><td>子代理传输</td><td>进程内 spawn/fork、ACP、Codex、Claude Code、dsh-sdk</td></tr>
+            <tr><td><code>ctx.web</code></td><td>网页搜索/抓取</td><td>web-search-exa / perplexity / deepseek、web-fetch-http</td></tr>
+            <tr><td><code>ctx.sandbox</code></td><td>进程沙箱</td><td>sandbox-local（按策略包装 argv）</td></tr>
+            <tr><td><code>ctx.sessionPersistence</code></td><td>会话持久化</td><td>session-persistence-jsonl、session-persistence-sqlite</td></tr>
+            <tr><td><code>ctx.approval</code></td><td>审批通道</td><td>ACP 为自己的 agent 提供桥接监听器</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card notebox">
+        <div class="card-title"><span class="ic">💡</span>为什么「消费方只认 ctx 键」这么重要？</div>
+        <p style="margin-bottom:0">
+          因为依赖被固定在「接口」上而不是「实现」上（第 04 章讲的服务按 key 查找）。
+          于是：换模型不用改循环；换沙箱不用改工具；换持久化后端不用改任何业务插件。
+          整个产品的能力边界由这些 seam 划出 —— 读源码时看到 <code>ctx.xxx</code>，
+          就知道这里有一道「可以换插头」的缝。
+        </p>
+      </div>
+
+      <h2>费曼自查</h2>
+
+      <div class="quiz-item">
+        <div class="q"><span class="qn">1</span><span>seam 的三个角色分别是什么？为什么缺一不可？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：Service Definition（接口）、Service Provider（实现）、Consumer（使用方）。缺了接口无法替换实现，缺了实现没人干活，缺了使用方能力没意义 —— seam 是完整能力，不是单一角色。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">2</span><span>「把执行世界换到远程沙箱，Bash、PTY、LSP 全都跟着搬走」——为什么不用改它们？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：因为它们消费的是 ctx.fs / ctx.subprocess 这些接口，而不是某个具体实现。实现换成 E2B 后，所有基于它们的消费方自然运行在远程环境 —— 这就是「换提供方 = 换整个能力」。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">3</span><span>dsh-shell 这个包在 shell 这个 seam 里承担什么角色？tool-bash 呢？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：dsh-shell 是 Service Definition（声明接口）；dsh-bash-local / dsh-bash-sandbox 是 Provider；dsh-tool-bash 是 Consumer（面向模型的工具）。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">4</span><span>一个包可以同时承担多个角色吗？举例。</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：可以。dsh-llm 同时是 Service Definition（声明 ctx.llm）和 Consumer（自己也会调用模型能力）。角色需要独立演进时才拆到不同包。</div>
+      </div>
+
+      <nav class="ch-nav">
+        <a href="06-session-log.html"><div class="dir">← 上一章</div><div class="ttl">会话日志：唯一真源</div></a>
+        <a class="next" href="08-tools.html"><div class="dir">下一章 →</div><div class="ttl">工具与执行流水线</div></a>
+      </nav>
+
+    </article>
+  </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

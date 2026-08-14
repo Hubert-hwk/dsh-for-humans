@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="委派与扩展：DeepSeek Harness 的子代理、后台任务、工作流、技能与目标。">
+<title>10 委派与扩展（子代理/工作流） · DeepSeek Harness 通俗教程</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="../index.html">
+      <span class="logo">dsh</span>
+      <span>
+        <span class="title">DeepSeek Harness 教程</span><br>
+        <span class="subtitle">费曼学习法 · 大白话版</span>
+      </span>
+    </a>
+            <nav class="nav">
+      <div class="nav-label">开始</div>
+      <a class="nav-link" href="../index.html"><span class="no">⌂</span><span>首页：这份教程怎么用</span></a>
+      <div class="nav-label">第一幕 · 它是什么</div>
+      <a class="nav-link" href="01-what-is-dsh.html"><span class="no">01</span><span>一分钟看懂 dsh</span></a>
+      <a class="nav-link" href="02-plugins.html"><span class="no">02</span><span>万物皆插件（乐高积木）</span></a>
+      <a class="nav-link" href="03-vs-claude-codex.html"><span class="no">03</span><span>和 Claude Code / Codex 比一比</span></a>
+      <div class="nav-label">第二幕 · 核心机制</div>
+      <a class="nav-link" href="04-cordis-five.html"><span class="no">04</span><span>Cordis 五件事</span></a>
+      <a class="nav-link" href="05-turn.html"><span class="no">05</span><span>一次对话的旅程（轮次）</span></a>
+      <a class="nav-link" href="06-session-log.html"><span class="no">06</span><span>会话日志：唯一真源</span></a>
+      <div class="nav-label">第三幕 · 可插拔能力</div>
+      <a class="nav-link" href="07-seam.html"><span class="no">07</span><span>能力缝：可替换的能力</span></a>
+      <a class="nav-link" href="08-tools.html"><span class="no">08</span><span>工具与执行流水线</span></a>
+      <a class="nav-link" href="09-scope.html"><span class="no">09</span><span>作用域：agent 的独立办公室</span></a>
+      <a class="nav-link active" href="10-delegation.html"><span class="no">10</span><span>委派与扩展（子代理/工作流）</span></a>
+      <div class="nav-label">第四幕 · 动手与资源</div>
+      <a class="nav-link" href="11-hands-on.html"><span class="no">11</span><span>动手：跑起来 + 写插件</span></a>
+      <a class="nav-link" href="12-next.html"><span class="no">12</span><span>术语表与下一步</span></a>
+    </nav>
+    <div class="side-foot">
+      开源教程 · 基于 deepseek-harness（0.1.0-rc.5）源码与官方文档<br>
+      欢迎 <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial">Star · Issue · PR</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="打开导航">☰</button>
+            <div class="crumbs">第三幕 · 可插拔能力 / <b>10 委派与扩展（子代理/工作流）</b></div>
+      <div class="progress"><span id="progressText">0%</span><span class="bar"><i id="progressBar"></i></span></div>
+    </header>
+
+    <article class="content">
+
+      <div class="ch-head">
+        <div class="kicker">第三幕 · 可插拔能力 · 第 10 章</div>
+        <h1>委派与扩展（子代理/工作流）</h1>
+        <p class="lede">子代理、后台任务、工作流脚本、技能 SOP —— 主 agent 的四种「扩展自己」的玩法。</p>
+      </div>
+
+
+      <div class="card analogy">
+        <div class="card-title"><span class="ic">🤝</span>开场小故事：一个人的公司</div>
+                <p>
+          你是一家一人公司。活儿多起来后，你发现不能什么都自己干——有的活要花很久，有的活可以并行，有的活有固定的流程。一个人加班到凌晨三点？那是因为你还没学会当老板。
+        </p>
+        <p style="margin-bottom:0">
+          于是你开始：招实习生（子代理，独立上下文干独立任务）、把长活挂后台（jobs，边干别的边等）、写批处理脚本（workflow，大规模派活）、给员工发岗位手册（skill，复用型说明书）。这正是 dsh 主 agent 的扩展之道——老板动动嘴，员工跑断腿。
+        </p>
+
+      </div>
+
+      <div class="oneliner">
+        一句话讲清楚：主 agent 通过 <b>subagent</b>（子代理）、<b>jobs</b>（后台任务）、
+        <b>workflow</b>（编排脚本）把工作派出去，再用 <b>skill / goal / plan / todo</b>
+        这些「软能力」把协作方式定下来。
+      </div>
+
+      <figure class="fig">
+        <img src="../assets/img/fig-delegation.svg" alt="委派示意图：主 agent 派生子代理、后台任务与工作流">
+        <figcaption><b>图 10-1</b> 三种「派活」方式 + 四种「软能力」。</figcaption>
+      </figure>
+
+      <h2>① 子代理（subagent）—— 招实习生</h2>
+      <p>
+        subagent seam 让一个 agent 把工作<b>委派给子 agent</b>（可选的扩展能力，不属于 agent loop 本身）。
+        子代理有<b>独立的上下文</b> —— 主 agent 不会被一堆细节撑爆上下文。
+      </p>
+      <ul>
+        <li><b>一次委派</b>（subagent_fork）：独立跑一件任务，拿一个结果回来（默认前台）；</li>
+        <li><b>可延续委派</b>（subagent）：一份持久化的子会话，可以跨轮继续 —— 后续用
+          <code>send_message</code> 续派、<code>interrupt_agent</code> 打断、<code>list_agents</code> 盘点；</li>
+        <li><b>提供方</b>：进程内 spawn/fork（走父级 ctx 创建）、进程外 ACP / Codex / Claude Code / dsh-sdk
+          （远程传输，把一轮委派交给另一个产品）。</li>
+      </ul>
+      <p>
+        fork 还有一个贴心细节：它会把父级的「平衡的已完成轮次前缀」作为种子注入子会话 ——
+        子代理开局就「知道」前面聊了啥。
+      </p>
+
+      <h2>② 后台任务（jobs）—— 挂后台排队</h2>
+      <p>
+        长时间运行的活（bash、子代理委派）可以登记到 <code>ctx.jobs</code> 后台任务注册表
+        （id 形如 <code>bash-3</code>、<code>subagent-1</code>，状态 running / completed / killed / failed……），
+        主对话继续干别的，稍后用三个工具读取：
+      </p>
+      <div class="codeblock">
+        <div class="cb-head"><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-lang">text</span><button class="cb-copy">复制</button></div>
+        <pre><code>job_list     # 看看有哪些后台任务在跑
+job_output   # 读某个任务的输出（可等待）
+job_kill     # 终止某个任务</code></pre>
+      </div>
+
+      <h2>③ 工作流（workflow）—— 写批处理脚本</h2>
+      <p>
+        <code>workflow</code> 工具让模型写一个 JS 编排脚本（纯 JS、顶层 await、最后 <code>return</code> 一个 JSON），
+        在 worker 线程引擎里跑，脚本里可以扇出大量子代理。四个核心钩子：
+      </p>
+      <div class="codeblock">
+        <div class="cb-head"><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-lang">js</span><button class="cb-copy">复制</button></div>
+        <pre><code>phase('审计')                              // 开始一个阶段
+const 结果 = await parallel([               // 并发跑，等全部完成（屏障）
+  () => agent('审 A', { schema }),          // 跑一个子代理
+  () => agent('审 B', { schema }),
+])
+const 流水 = await pipeline(条目, 阶段1, 阶段2) // 每项过各阶段（无屏障）
+log('进度汇报')
+return 结果.filter(Boolean)                  // 最终 JSON 结果</code></pre>
+      </div>
+      <p>
+        官方指引：<b>一两次委派用普通 subagent 就够了，大规模扇出才用 workflow。</b>
+        还有固定形态的 <code>ralph</code> 工具：每轮启动<b>全新</b>子代理（无对话种子），
+        共享工作区当长期记忆，轮间只传一份有界结构化交接报告 —— 适合需要「换个人重新想」的任务。
+      </p>
+      <p style="font-size:14px;color:var(--ink-faint)">注：上面脚本为便于理解而写的<b>示意代码</b>，并非官方文档原文；钩子名称与语义均属实（agent / pipeline / parallel / phase / log / return JSON）。</p>
+
+      <h2>④ 软能力：skill / goal / plan / todo</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>能力</th><th>一句话</th></tr></thead>
+          <tbody>
+            <tr><td><code>skill</code>（技能）</td><td>复用型「岗位说明书」（SOP）：目录由 ctx.skills 合并提供方，tool-skill 在会话开头注入目录、按需加载正文。技能是「可选的指令」，工具是「可调用的动作」。</td></tr>
+            <tr><td><code>goal</code>（目标）</td><td>附着在会话上的持久完成目标（active/paused/blocked/complete + Goal Round 上限），事件溯源，按修订号演进；Goal Round = 一次由目标触发的轮次。</td></tr>
+            <tr><td><code>plan</code>（计划模式）</td><td>「先交方案再动手」的软性指引状态：激活期间每个请求携带 plan 指引段，注册 exit_plan_mode 工具收尾。</td></tr>
+            <tr><td><code>todo</code>（待办）</td><td>任务清单：todo_write 每次调用整体替换，写全量 todo/write 会话事件，UI 渲染成 checklist。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card notebox">
+        <div class="card-title"><span class="ic">💡</span>什么时候用哪个？</div>
+        <p style="margin-bottom:0">
+          一件独立任务 → <code>subagent</code>；需要长期合作、来回派活 → 可延续 subagent + 控制工具；
+          很多件并行/流水线 → <code>workflow</code>；想换全新视角反复迭代 → <code>ralph</code>；
+          长时间跑 → 挂 <code>jobs</code> 后台；反复用到的方法 → 沉淀成 <code>skill</code>。
+        </p>
+      </div>
+
+      <h2>费曼自查</h2>
+
+      <div class="quiz-item">
+        <div class="q"><span class="qn">1</span><span>一次委派和可延续委派有什么区别？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：一次委派（subagent_fork）= 独立跑一件任务拿一个结果（默认前台）；可延续委派（subagent）= 一份持久化子会话，可跨轮继续，用 send_message 续派、interrupt_agent 打断、list_agents 盘点。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">2</span><span>什么时候用 workflow 而不是普通 subagent？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：一两次委派用普通 subagent；大规模扇出（很多子任务并行/流水线/分阶段）才用 workflow 脚本 —— 它用 agent()/pipeline()/parallel()/phase() 编排。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">3</span><span>skill 和 tool 的区别？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：skill 是可选的指令（复用型任务说明书，注入到提示词上下文）；tool 是模型可调用的动作。技能是「教你怎么做」，工具是「替你做」。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">4</span><span>Goal Round 和「轮次」有什么关系？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：Goal Round 是目标策略的一次续行周期，会被具体化为一个由目标触发的轮次（可含零或多个步骤）。Round 计数器归目标策略所有，不统计会话里每个普通轮次。</div>
+      </div>
+
+      <nav class="ch-nav">
+        <a href="09-scope.html"><div class="dir">← 上一章</div><div class="ttl">作用域：agent 的独立办公室</div></a>
+        <a class="next" href="11-hands-on.html"><div class="dir">下一章 →</div><div class="ttl">动手：跑起来 + 写插件</div></a>
+      </nav>
+
+    </article>
+  </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

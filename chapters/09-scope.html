@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="作用域：DeepSeek Harness 中每个 agent 的独立办公室、遮蔽与工具限制。">
+<title>09 作用域：agent 的独立办公室 · DeepSeek Harness 通俗教程</title>
+<link rel="icon" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="../index.html">
+      <span class="logo">dsh</span>
+      <span>
+        <span class="title">DeepSeek Harness 教程</span><br>
+        <span class="subtitle">费曼学习法 · 大白话版</span>
+      </span>
+    </a>
+            <nav class="nav">
+      <div class="nav-label">开始</div>
+      <a class="nav-link" href="../index.html"><span class="no">⌂</span><span>首页：这份教程怎么用</span></a>
+      <div class="nav-label">第一幕 · 它是什么</div>
+      <a class="nav-link" href="01-what-is-dsh.html"><span class="no">01</span><span>一分钟看懂 dsh</span></a>
+      <a class="nav-link" href="02-plugins.html"><span class="no">02</span><span>万物皆插件（乐高积木）</span></a>
+      <a class="nav-link" href="03-vs-claude-codex.html"><span class="no">03</span><span>和 Claude Code / Codex 比一比</span></a>
+      <div class="nav-label">第二幕 · 核心机制</div>
+      <a class="nav-link" href="04-cordis-five.html"><span class="no">04</span><span>Cordis 五件事</span></a>
+      <a class="nav-link" href="05-turn.html"><span class="no">05</span><span>一次对话的旅程（轮次）</span></a>
+      <a class="nav-link" href="06-session-log.html"><span class="no">06</span><span>会话日志：唯一真源</span></a>
+      <div class="nav-label">第三幕 · 可插拔能力</div>
+      <a class="nav-link" href="07-seam.html"><span class="no">07</span><span>能力缝：可替换的能力</span></a>
+      <a class="nav-link" href="08-tools.html"><span class="no">08</span><span>工具与执行流水线</span></a>
+      <a class="nav-link active" href="09-scope.html"><span class="no">09</span><span>作用域：agent 的独立办公室</span></a>
+      <a class="nav-link" href="10-delegation.html"><span class="no">10</span><span>委派与扩展（子代理/工作流）</span></a>
+      <div class="nav-label">第四幕 · 动手与资源</div>
+      <a class="nav-link" href="11-hands-on.html"><span class="no">11</span><span>动手：跑起来 + 写插件</span></a>
+      <a class="nav-link" href="12-next.html"><span class="no">12</span><span>术语表与下一步</span></a>
+    </nav>
+    <div class="side-foot">
+      开源教程 · 基于 deepseek-harness（0.1.0-rc.5）源码与官方文档<br>
+      欢迎 <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial">Star · Issue · PR</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="打开导航">☰</button>
+            <div class="crumbs">第三幕 · 可插拔能力 / <b>09 作用域：agent 的独立办公室</b></div>
+      <div class="progress"><span id="progressText">0%</span><span class="bar"><i id="progressBar"></i></span></div>
+    </header>
+
+    <article class="content">
+
+      <div class="ch-head">
+        <div class="kicker">第三幕 · 可插拔能力 · 第 09 章</div>
+        <h1>作用域：agent 的独立办公室</h1>
+        <p class="lede">几个 agent 共用一间大办公室？不 —— 每人一间独立办公室，还能在自己的房间里「遮住」公共设施。</p>
+      </div>
+
+
+      <div class="card analogy">
+        <div class="card-title"><span class="ic">🏢</span>开场小故事：共享工位还是独立办公室？</div>
+                <p>
+          一家公司有一层公共设施：茶水间、打印机、会议室（全局注册：工具、提示词、监听器）。但如果所有员工共用一个工位，A 调亮了自己的显示器、贴满了自己的便签，B 一屁股坐下来全乱了——这工位还能不能好好上班了？
+        </p>
+        <p style="margin-bottom:0">
+          dsh 的做法：每个 agent 有自己的独立办公室（scope）。公共设施人人都能用；但你在自己办公室里的布置（带作用域的注册）只有你自己看得到，还能用一块帘子把某些公共设施「遮住」（shadowing / restriction）。你在自己屋里偷偷藏了台打印机，隔壁同事该用公共打印机还用——谁也不耽误谁。
+        </p>
+
+      </div>
+
+      <div class="oneliner">
+        一句话讲清楚：<b>作用域（scope）</b> 是按 agent 划分的注册单位 ——
+        一项贡献要么全局可见，要么只属于<b>恰好一个 agent</b>；
+        同名时「最具体者胜出」（shadowing），兄弟 agent 互不听闻。
+      </div>
+
+      <figure class="fig">
+        <img src="../assets/img/fig-scope.svg" alt="作用域示意图：全局层与两个 agent 各自的带作用域注册与遮蔽">
+        <figcaption><b>图 09-1</b> 全局层人人可见；Agent A 用自己的注册「遮住」同名全局工具，Agent B 看到的仍是全局原样。</figcaption>
+      </figure>
+
+      <h2>关键概念三件套</h2>
+
+      <h3>① scope key —— 办公室的门牌号</h3>
+      <p>
+        scope key 是一个不透明的对象身份（按对象同一性比较）。dsh 的约定很干脆：
+        <b>一个活跃的 agent 就是它自己 scope 的 key</b>。
+      </p>
+
+      <h3>② agent.ctx —— 你的私人办公室</h3>
+      <p>
+        每个 agent 有一个带作用域的上下文 <code>agent.ctx</code>。通过它做的注册
+        同时获得两个特性：<b>作用域可见</b>（只有这个 agent 能看到）和
+        <b>作用域生命周期</b>（agent 销毁时随之撤销）。
+        想在某个 agent 里注册一个它专属的工具、一段它专属的提示词？都走这里。
+      </p>
+
+      <h3>③ shadowing —— 最具体者胜出</h3>
+      <p>
+        注册视图沿「父链」向下继承：<b>agent → preset → 全局</b>，离 agent 越近的越优先。
+        同名时内层遮住外层 —— 这给了两个强大的能力：
+      </p>
+      <ul>
+        <li><b>按 agent 定制 persona</b>：为某个 agent 提供同名的提示词片段，盖住全局默认；</li>
+        <li><b>按 agent 定制工具变体</b>：给它一个同名工具，其它 agent 不受影响。</li>
+      </ul>
+
+      <h2>restriction：把工具藏起来</h2>
+      <p>
+        <code>ctx.tools.restrict(filter)</code> 可以为单个 scope 过滤全局工具集合
+        （多个 restriction 取交集 —— 越藏越少）。被过滤掉的工具：
+        <b>既不出现在提示词里，也拒绝执行</b> —— 对模型来说它「等于不存在」。
+        注意官方提醒：这是<b>可见性组合，不是安全边界</b>。
+      </p>
+
+      <h2>preset：全局与 agent 之间的「岗位手册」</h2>
+      <p>
+        一个 preset 就是一份 <code>agent.cordis.yml</code>（一套插件组合）。
+        它被<b>每进程只挂载一次</b>为常驻挂载（standing mount），
+        每个选择该 preset 的会话把自己的 scope 挂到它下面：
+      </p>
+      <div class="codeblock">
+        <div class="cb-head"><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-dot"></span><span class="cb-lang">text</span><button class="cb-copy">复制</button></div>
+        <pre><code>视图解析顺序：agent → preset → global
+
+- agent 专属注册：只属于这个 agent
+- preset 挂载：所有选了这个 preset 的会话共用（工具/提示词恰好一份）
+- 全局层：人人可见</code></pre>
+      </div>
+      <p>
+        两个兄弟 preset 互不听闻（挂在不同常驻挂载下）；preset 内的服务可以放进
+        <code>isolate</code> realm —— 相当于把同名服务关进各自的隔离域，互不冲突。
+        同一个 preset 的所有会话彼此隔离，因为插件按 Session 键控状态。
+      </p>
+
+      <div class="card notebox">
+        <div class="card-title"><span class="ic">💡</span>和「子代理」的关系</div>
+        <p style="margin-bottom:0">
+          注意：<b>带作用域的注册不会向下继承给子代理</b>（scope 只有两层，扁平结构）。
+          子代理想要父级的能力，走的是「加入父级的 preset 组合」这条数据通道（lineage），
+          而不是继承 scope 结构。
+        </p>
+      </div>
+
+      <h2>费曼自查</h2>
+
+      <div class="quiz-item">
+        <div class="q"><span class="qn">1</span><span>「带作用域注册」和「全局注册」的区别？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：全局注册对所有 agent 可见；带作用域注册只属于恰好一个 scope（一个 agent），通过 agent.ctx 进行，并且生命周期绑定该 agent —— 销毁即撤销。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">2</span><span>shadowing（遮蔽）是怎么工作的？有什么用途？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：注册视图沿 agent → preset → global 解析，同名时最内层（最具体者）胜出。用途：按 agent 定制 persona 提示词、定制工具变体，不影响其他 agent。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">3</span><span>restriction 过滤掉一个工具后，模型看到什么？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：既不出现在提示词里，也拒绝执行 —— 对模型来说等于不存在，与「工具真的没注册」无法区分。它是可见性组合，不是安全边界。</div>
+      </div>
+      <div class="quiz-item">
+        <div class="q"><span class="qn">4</span><span>preset 的常驻挂载是什么意思？兄弟 preset 之间会互相影响吗？</span><span class="q-arrow">▶</span></div>
+        <div class="a">参考：一份 preset 每进程只挂载一次（standing mount），所有选择它的会话共享这一份组合；不同 preset 挂在不同常驻挂载下，兄弟互不听闻。preset 内同名服务可用 isolate realm 隔离。</div>
+      </div>
+
+      <nav class="ch-nav">
+        <a href="08-tools.html"><div class="dir">← 上一章</div><div class="ttl">工具与执行流水线</div></a>
+        <a class="next" href="10-delegation.html"><div class="dir">下一章 →</div><div class="ttl">委派与扩展（子代理/工作流）</div></a>
+      </nav>
+
+    </article>
+  </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

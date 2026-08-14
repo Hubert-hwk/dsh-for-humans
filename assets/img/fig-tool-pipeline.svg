@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 480" font-family="-apple-system,'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif">
+  <defs>
+    <filter id="wShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#1f2430" flood-opacity="0.13"/>
+    </filter>
+    <marker id="wArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f4bd6"/>
+    </marker>
+    <marker id="wArrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f8a4c"/>
+    </marker>
+  </defs>
+
+  <text x="430" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1f2430">🛂 工具执行流水线：一次工具调用的「安检通道」</text>
+
+  <!-- 顶：模型 -->
+  <g filter="url(#wShadow)">
+    <rect x="330" y="54" width="200" height="46" rx="12" fill="#fdf0e6" stroke="#e8590c"/>
+    <text x="430" y="72" text-anchor="middle" font-size="13.5" font-weight="700" fill="#c2410c">🧠 模型发出 tool/call</text>
+    <text x="430" y="91" text-anchor="middle" font-size="11.5" fill="#7a8296">按 name + JSON 参数</text>
+  </g>
+  <line x1="430" y1="100" x2="430" y2="128" stroke="#2f4bd6" stroke-width="2" marker-end="url(#wArr)"/>
+
+  <!-- 四环节 -->
+  <g>
+    <g filter="url(#wShadow)">
+      <rect x="30" y="132" width="186" height="126" rx="14" fill="#ffffff" stroke="#c6cddd"/>
+      <rect x="30" y="132" width="186" height="36" rx="14" fill="#2f4bd6"/>
+      <rect x="30" y="148" width="186" height="20" fill="#2f4bd6"/>
+      <text x="123" y="156" text-anchor="middle" font-size="13.5" font-weight="800" fill="#ffffff">① pre-execute</text>
+      <text x="123" y="192" text-anchor="middle" font-size="12" fill="#4a5266">✅ 放行 · ⛔ 拒绝 · 🙋 询问</text>
+      <text x="123" y="212" text-anchor="middle" font-size="11.5" fill="#7a8296">策略监听器 waterfall 表态</text>
+      <text x="123" y="230" text-anchor="middle" font-size="11.5" fill="#7a8296">参数不可改写</text>
+      <text x="123" y="250" text-anchor="middle" font-size="11" fill="#e8590c">⛔ 拒绝即短路</text>
+    </g>
+    <line x1="216" y1="195" x2="252" y2="195" stroke="#2f4bd6" stroke-width="2" marker-end="url(#wArr)"/>
+
+    <g filter="url(#wShadow)">
+      <rect x="256" y="132" width="186" height="126" rx="14" fill="#ffffff" stroke="#c6cddd"/>
+      <rect x="256" y="132" width="186" height="36" rx="14" fill="#2f4bd6"/>
+      <rect x="256" y="148" width="186" height="20" fill="#2f4bd6"/>
+      <text x="349" y="156" text-anchor="middle" font-size="13.5" font-weight="800" fill="#ffffff">② 守卫 + 审批</text>
+      <text x="349" y="192" text-anchor="middle" font-size="12" fill="#4a5266">🔒 单调守卫只收窄</text>
+      <text x="349" y="212" text-anchor="middle" font-size="11.5" fill="#7a8296">ask → 人类放行一次</text>
+      <text x="349" y="230" text-anchor="middle" font-size="11.5" fill="#7a8296">allowed-once 才继续</text>
+      <text x="349" y="250" text-anchor="middle" font-size="11" fill="#7a8296">🔑 沙箱升级也在这确认</text>
+    </g>
+    <line x1="442" y1="195" x2="478" y2="195" stroke="#2f4bd6" stroke-width="2" marker-end="url(#wArr)"/>
+
+    <g filter="url(#wShadow)">
+      <rect x="482" y="132" width="186" height="126" rx="14" fill="#ffffff" stroke="#c6cddd"/>
+      <rect x="482" y="132" width="186" height="36" rx="14" fill="#2f4bd6"/>
+      <rect x="482" y="148" width="186" height="20" fill="#2f4bd6"/>
+      <text x="575" y="156" text-anchor="middle" font-size="13.5" font-weight="800" fill="#ffffff">③ execute</text>
+      <text x="575" y="192" text-anchor="middle" font-size="12" fill="#4a5266">⚙️ 环绕分派（超时/重试）</text>
+      <text x="575" y="212" text-anchor="middle" font-size="11.5" fill="#7a8296">执行器真正动手</text>
+      <text x="575" y="230" text-anchor="middle" font-size="11.5" fill="#7a8296">bash / fs / web …</text>
+      <text x="575" y="250" text-anchor="middle" font-size="11" fill="#7a8296">🛡️ 沙箱在执行器层约束</text>
+    </g>
+    <line x1="668" y1="195" x2="704" y2="195" stroke="#2f4bd6" stroke-width="2" marker-end="url(#wArr)"/>
+
+    <g filter="url(#wShadow)">
+      <rect x="708" y="132" width="122" height="126" rx="14" fill="#ffffff" stroke="#c6cddd"/>
+      <rect x="708" y="132" width="122" height="36" rx="14" fill="#2f4bd6"/>
+      <rect x="708" y="148" width="122" height="20" fill="#2f4bd6"/>
+      <text x="769" y="156" text-anchor="middle" font-size="13.5" font-weight="800" fill="#ffffff">④ post</text>
+      <text x="769" y="192" text-anchor="middle" font-size="12" fill="#4a5266">🧾 检查 / 替换</text>
+      <text x="769" y="212" text-anchor="middle" font-size="11.5" fill="#7a8296">结果</text>
+      <text x="769" y="230" text-anchor="middle" font-size="11" fill="#e8590c">spill 在这落盘</text>
+    </g>
+  </g>
+
+  <line x1="430" y1="258" x2="430" y2="288" stroke="#2f4bd6" stroke-width="2" marker-end="url(#wArr)"/>
+
+  <!-- 底 -->
+  <g filter="url(#wShadow)">
+    <rect x="140" y="292" width="300" height="54" rx="12" fill="#232a3b"/>
+    <text x="290" y="315" text-anchor="middle" font-size="13" font-weight="700" fill="#a5e3a5">📒 tool/result 写入会话日志</text>
+    <text x="290" y="335" text-anchor="middle" font-size="11" fill="#8a97b8">不可变 · 权威结果 · callId 配对</text>
+  </g>
+  <g filter="url(#wShadow)">
+    <rect x="500" y="292" width="220" height="54" rx="12" fill="#e9f7ef" stroke="#1f8a4c"/>
+    <text x="610" y="315" text-anchor="middle" font-size="13" font-weight="700" fill="#14532d">↩️ 结果回到模型 → 继续</text>
+    <text x="610" y="335" text-anchor="middle" font-size="11" fill="#4a5266">直到不再欠工作，轮次结束</text>
+  </g>
+  <line x1="440" y1="319" x2="498" y2="319" stroke="#1f8a4c" stroke-width="2" marker-end="url(#wArrG)"/>
+
+  <text x="430" y="400" text-anchor="middle" font-size="13" fill="#7a8296">瀑布语义：监听器要么调用 next() 把接力棒传下去，要么直接拍板（拒绝 / 替换 / 改结果）短路链条。</text>
+  <text x="430" y="428" text-anchor="middle" font-size="13" fill="#7a8296">审批不通过、没有审批通道、守卫收紧 —— 一律变成「拒绝」，与工具不存在时无法区分。</text>
+</svg>

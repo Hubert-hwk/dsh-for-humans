@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 450" font-family="-apple-system,'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif">
+  <defs>
+    <filter id="oShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#1f2430" flood-opacity="0.13"/>
+    </filter>
+    <marker id="oArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f4bd6"/>
+    </marker>
+  </defs>
+
+  <text x="430" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1f2430">🏢 作用域：每个 agent 一间独立办公室，还能「遮住」公共设施</text>
+
+  <!-- 全局层 -->
+  <g filter="url(#oShadow)">
+    <rect x="40" y="66" width="780" height="86" rx="16" fill="#eef1ff" stroke="#c9d4ff"/>
+    <text x="430" y="92" text-anchor="middle" font-size="14.5" font-weight="700" fill="#1c2c8a">🌐 公共设施（全局层 · 所有 agent 可见）</text>
+    <g font-size="12" fill="#1c2c8a">
+      <rect x="66" y="106" width="140" height="32" rx="9" fill="#ffffff" stroke="#c9d4ff"/><text x="136" y="127" text-anchor="middle">📋 提示词段落 persona</text>
+      <rect x="222" y="106" width="120" height="32" rx="9" fill="#ffffff" stroke="#c9d4ff"/><text x="282" y="127" text-anchor="middle">📖 工具 read</text>
+      <rect x="358" y="106" width="120" height="32" rx="9" fill="#ffffff" stroke="#c9d4ff"/><text x="418" y="127" text-anchor="middle">💻 工具 bash</text>
+      <rect x="494" y="106" width="140" height="32" rx="9" fill="#ffffff" stroke="#c9d4ff"/><text x="564" y="127" text-anchor="middle">🌐 工具 web_search</text>
+      <rect x="650" y="106" width="150" height="32" rx="9" fill="#ffffff" stroke="#c9d4ff"/><text x="725" y="127" text-anchor="middle">📦 变量 / 监听器 / …</text>
+    </g>
+  </g>
+
+  <!-- Agent A -->
+  <g filter="url(#oShadow)">
+    <rect x="40" y="192" width="380" height="206" rx="16" fill="#ffffff" stroke="#c6cddd"/>
+    <rect x="40" y="192" width="380" height="42" rx="16" fill="#2f4bd6"/>
+    <rect x="40" y="214" width="380" height="20" fill="#2f4bd6"/>
+    <text x="230" y="219" text-anchor="middle" font-size="14" font-weight="800" fill="#ffffff">👩‍💻 Agent A（scope key = A）</text>
+    <g font-size="12" fill="#1c2c8a">
+      <rect x="62" y="248" width="126" height="34" rx="9" fill="#fdf0e6" stroke="#f5c6a0"/><text x="125" y="270" text-anchor="middle">📖 read（A 版）</text>
+      <rect x="200" y="248" width="126" height="34" rx="9" fill="#fdf0e6" stroke="#f5c6a0"/><text x="263" y="270" text-anchor="middle">💻 bash（遮蔽）</text>
+      <rect x="338" y="248" width="62" height="34" rx="9" fill="#e9f7ef" stroke="#a8d8bd"/><text x="369" y="270" text-anchor="middle">A 专属</text>
+    </g>
+    <text x="230" y="310" text-anchor="middle" font-size="12" fill="#4a5266">A 的注册遮住了全局同名项</text>
+    <text x="230" y="332" text-anchor="middle" font-size="12" fill="#4a5266">（shadowing：最具体者胜出）</text>
+    <text x="230" y="354" text-anchor="middle" font-size="11.5" fill="#7a8296">restrict 还能把全局工具藏起来</text>
+    <text x="230" y="374" text-anchor="middle" font-size="11.5" fill="#7a8296">→ 模型看不到 bash = 不存在</text>
+  </g>
+
+  <!-- Agent B -->
+  <g filter="url(#oShadow)">
+    <rect x="440" y="192" width="380" height="206" rx="16" fill="#ffffff" stroke="#c6cddd"/>
+    <rect x="440" y="192" width="380" height="42" rx="16" fill="#7c5cff"/>
+    <rect x="440" y="214" width="380" height="20" fill="#7c5cff"/>
+    <text x="630" y="219" text-anchor="middle" font-size="14" font-weight="800" fill="#ffffff">🧑‍💻 Agent B（scope key = B）</text>
+    <g font-size="12" fill="#1c2c8a">
+      <rect x="462" y="248" width="126" height="34" rx="9" fill="#e9f7ef" stroke="#a8d8bd"/><text x="525" y="270" text-anchor="middle">B 专属工具</text>
+      <rect x="600" y="248" width="120" height="34" rx="9" fill="#eef1ff" stroke="#c9d4ff"/><text x="660" y="270" text-anchor="middle">📖 read（全局）</text>
+      <rect x="732" y="248" width="66" height="34" rx="9" fill="#eef1ff" stroke="#c9d4ff"/><text x="765" y="270" text-anchor="middle">💻 bash</text>
+    </g>
+    <text x="630" y="310" text-anchor="middle" font-size="12" fill="#4a5266">B 没遮蔽任何东西</text>
+    <text x="630" y="332" text-anchor="middle" font-size="12" fill="#4a5266">→ 看到全局的 read / bash / web_search</text>
+    <text x="630" y="354" text-anchor="middle" font-size="11.5" fill="#7a8296">A 的遮蔽对它毫无影响</text>
+    <text x="630" y="374" text-anchor="middle" font-size="11.5" fill="#7a8296">兄弟之间互不听闻</text>
+  </g>
+
+  <line x1="230" y1="152" x2="230" y2="190" stroke="#2f4bd6" stroke-width="2" marker-end="url(#oArr)"/>
+  <line x1="630" y1="152" x2="630" y2="190" stroke="#2f4bd6" stroke-width="2" marker-end="url(#oArr)"/>
+
+  <text x="430" y="432" text-anchor="middle" font-size="12.5" fill="#7a8296">preset 常驻挂载 = 全局与 agent 之间的一层「岗位手册」：视图解析顺序 agent → preset → global。</text>
+</svg>

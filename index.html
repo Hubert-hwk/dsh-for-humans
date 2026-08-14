@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="用费曼学习法讲清楚 DeepSeek Harness：万物皆插件的 AI Agent 框架。大白话 + 原创图解 + 与 Claude Code/Codex 对比 + 费曼自查。">
+<title>DeepSeek Harness 通俗教程 · 费曼学习法解读</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%232f4bd6'/%3E%3Ctext x='50' y='70' font-size='56' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3Edsh%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- 侧边栏 -->
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="index.html">
+      <span class="logo">dsh</span>
+      <span>
+        <span class="title">DeepSeek Harness 教程</span><br>
+        <span class="subtitle">费曼学习法 · 大白话版</span>
+      </span>
+    </a>
+    <nav class="nav">
+      <div class="nav-label">开始</div>
+      <a class="nav-link active" href="index.html"><span class="no">⌂</span><span>首页：这份教程怎么用</span></a>
+      <div class="nav-label">第一幕 · 它是什么</div>
+      <a class="nav-link" href="chapters/01-what-is-dsh.html"><span class="no">01</span><span>一分钟看懂 dsh</span></a>
+      <a class="nav-link" href="chapters/02-plugins.html"><span class="no">02</span><span>万物皆插件（乐高积木）</span></a>
+      <a class="nav-link" href="chapters/03-vs-claude-codex.html"><span class="no">03</span><span>和 Claude Code / Codex 比一比</span></a>
+      <div class="nav-label">第二幕 · 核心机制</div>
+      <a class="nav-link" href="chapters/04-cordis-five.html"><span class="no">04</span><span>Cordis 五件事</span></a>
+      <a class="nav-link" href="chapters/05-turn.html"><span class="no">05</span><span>一次对话的旅程（轮次）</span></a>
+      <a class="nav-link" href="chapters/06-session-log.html"><span class="no">06</span><span>会话日志：唯一真源</span></a>
+      <div class="nav-label">第三幕 · 可插拔能力</div>
+      <a class="nav-link" href="chapters/07-seam.html"><span class="no">07</span><span>能力缝：可替换的能力</span></a>
+      <a class="nav-link" href="chapters/08-tools.html"><span class="no">08</span><span>工具与执行流水线</span></a>
+      <a class="nav-link" href="chapters/09-scope.html"><span class="no">09</span><span>作用域：agent 的独立办公室</span></a>
+      <a class="nav-link" href="chapters/10-delegation.html"><span class="no">10</span><span>委派与扩展（子代理/工作流）</span></a>
+      <div class="nav-label">第四幕 · 动手与资源</div>
+      <a class="nav-link" href="chapters/11-hands-on.html"><span class="no">11</span><span>动手：跑起来 + 写插件</span></a>
+      <a class="nav-link" href="chapters/12-next.html"><span class="no">12</span><span>术语表与下一步</span></a>
+    </nav>
+    <div class="side-foot">
+      开源教程 · 基于 deepseek-harness（0.1.0-rc.5）源码与官方文档<br>
+      欢迎 <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial">Star · Issue · PR</a>
+    </div>
+  </aside>
+
+  <!-- 主内容 -->
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="打开导航">☰</button>
+      <div class="crumbs">首页</div>
+      <div class="progress"><span id="progressText">0%</span><span class="bar"><i id="progressBar"></i></span></div>
+    </header>
+
+    <div class="hero">
+      <div class="logo-big">dsh</div>
+      <h1>DeepSeek Harness，用大白话讲给你听</h1>
+      <p class="lede">
+        它说自己是「万物皆插件」的 AI Agent 框架——每个字都认识，连起来就劝退，对吧？
+        别慌。这份教程用<b>费曼学习法</b>：生活类比、原创图解、讲完还要考你，
+        保证让小白也能<b>笑着看懂</b>。没听过 dsh？没关系，
+        我们用你熟悉的 <b>Claude Code / Codex</b> 当尺子，从头量到尾。
+      </p>
+      <div class="tags">
+        <span class="tag hot">✅ 零基础可读</span>
+        <span class="tag">😂 有梗 · 小白友好</span>
+        <span class="tag">🧱 万物皆插件</span>
+        <span class="tag">🚗 与 Claude Code / Codex 对比</span>
+        <span class="tag">📖 每章配原创图解</span>
+        <span class="tag">❓ 每章有费曼自查</span>
+        <span class="tag">🌐 开源教程</span>
+      </div>
+    </div>
+
+    <!-- 费曼学习法四步 -->
+    <div class="method-strip">
+      <div class="m"><div class="ic">📖</div><div class="t">选一个概念</div><div class="d">从 dsh 的宝库里挑一个</div></div>
+      <div class="m"><div class="ic">🗣️</div><div class="t">用大白话讲</div><div class="d">像给 8 岁小孩讲，禁说黑话</div></div>
+      <div class="m"><div class="ic">✍️</div><div class="t">自己复述</div><div class="d">合上书讲一遍，卡壳=没懂</div></div>
+      <div class="m"><div class="ic">🔍</div><div class="t">查漏补缺</div><div class="d">回炉重看，顺便对照源码</div></div>
+    </div>
+
+    <!-- 章节卡片 -->
+    <div class="chapter-grid">
+      <a class="chapter-card" href="chapters/01-what-is-dsh.html">
+        <div class="cno">第 01 章</div>
+        <h3>一分钟看懂 dsh</h3>
+        <p>模型负责「想」，dsh 负责「动手 + 记录」。一张全景图建立直觉。</p>
+      </a>
+      <a class="chapter-card" href="chapters/02-plugins.html">
+        <div class="cno">第 02 章</div>
+        <h3>万物皆插件（乐高积木）</h3>
+        <p>没有特权内核：模型、工具、日志、循环本身都是积木，可替换可叠加。</p>
+      </a>
+      <a class="chapter-card" href="chapters/03-vs-claude-codex.html">
+        <div class="cno">第 03 章</div>
+        <h3>和 Claude Code / Codex 比一比</h3>
+        <p>它们是「整车」，dsh 是「造车平台」—— 还能把前两者雇成员工。</p>
+      </a>
+      <a class="chapter-card" href="chapters/04-cordis-five.html">
+        <div class="cno">第 04 章</div>
+        <h3>Cordis 五件事</h3>
+        <p>插件、上下文、注入、类型化事件、可逆副作用 —— 底层框架的五个核心概念。</p>
+      </a>
+      <a class="chapter-card" href="chapters/05-turn.html">
+        <div class="cno">第 05 章</div>
+        <h3>一次对话的旅程（轮次）</h3>
+        <p>从你发一句话，到模型调用工具，全程走一遍「轮次与步骤」。</p>
+      </a>
+      <a class="chapter-card" href="chapters/06-session-log.html">
+        <div class="cno">第 06 章</div>
+        <h3>会话日志：唯一真源</h3>
+        <p>流水账 vs 余额：模型历史不单独存储，随时从日志重算。</p>
+      </a>
+      <a class="chapter-card" href="chapters/07-seam.html">
+        <div class="cno">第 07 章</div>
+        <h3>能力缝：可替换的能力</h3>
+        <p>接口 / 实现 / 使用方三件套：换一个实现，整个产品跟着变。</p>
+      </a>
+      <a class="chapter-card" href="chapters/08-tools.html">
+        <div class="cno">第 08 章</div>
+        <h3>工具与执行流水线</h3>
+        <p>工具是模型的手；每次调用都过「安检通道」：审批、守卫、溢出处理。</p>
+      </a>
+      <a class="chapter-card" href="chapters/09-scope.html">
+        <div class="cno">第 09 章</div>
+        <h3>作用域：独立办公室</h3>
+        <p>每个 agent 有自己的房间，还能「遮住」公共设施，互不干扰。</p>
+      </a>
+      <a class="chapter-card" href="chapters/10-delegation.html">
+        <div class="cno">第 10 章</div>
+        <h3>委派与扩展</h3>
+        <p>子代理、后台任务、工作流脚本、技能 SOP —— 一个人干不完就招人。</p>
+      </a>
+      <a class="chapter-card" href="chapters/11-hands-on.html">
+        <div class="cno">第 11 章</div>
+        <h3>动手：跑起来 + 写插件</h3>
+        <p>装 Node、起 Web UI、写第一个组合包，亲手摸一遍整条链路。</p>
+      </a>
+      <a class="chapter-card" href="chapters/12-next.html">
+        <div class="cno">第 12 章</div>
+        <h3>术语表与下一步</h3>
+        <p>官方术语速查、源码地图、官方文档入口，以及进阶路线。</p>
+      </a>
+    </div>
+
+    <article class="content" style="padding-top:10px">
+      <div class="card notebox">
+        <div class="card-title"><span class="ic">ℹ️</span>这份教程是怎么来的</div>
+        <p>
+          本教程基于 <a href="https://github.com/deepseek-ai/deepseek-harness">deepseek-harness</a>
+          仓库（DeepSeek AI 开源的 Agent 框架）的最新源码与官方文档撰写，核对到 <code>0.1.0-rc.5</code> 版本。
+          所有图解均为原创 SVG，纯本地资源，无任何外部依赖。
+        </p>
+        <p style="margin-bottom:0">
+          阅读建议：顺着 01 → 11 走一遍（约 40 分钟，中间允许笑出声）；每一章结尾的「费曼自查」请先自己讲一遍再看答案——
+          那才是费曼学习法的关键一步（也是检验你有没有真懂的时刻）。
+          如果你觉得哪里讲得不够明白，或者发现了错误，欢迎提
+          <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial/issues">Issue</a> /
+          <a href="https://github.com/Hubert-hwk/dsh-feynman-tutorial/pulls">PR</a>——也欢迎来补充冷笑话。
+        </p>
+      </div>
+    </article>
+
+  </div>
+</div>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
