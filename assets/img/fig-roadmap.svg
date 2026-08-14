@@ -1,11 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" font-family="-apple-system,'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif">
-  <!-- ============ sketchnote 学习路线图 · 原型 ============ -->
+  <!-- ============ sketchnote 学习路线图 v2 ============ -->
   <defs>
-    <!-- 手绘箭头（深蓝） -->
     <marker id="skArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
       <path d="M0,0 L10,5 L0,10 z" fill="#2C5F8A"/>
     </marker>
-    <!-- 手绘箭头（珊瑚红） -->
     <marker id="skArrR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
       <path d="M0,0 L10,5 L0,10 z" fill="#D85C4A"/>
     </marker>
@@ -16,105 +14,100 @@
 
   <!-- ============ 标题 ============ -->
   <text x="800" y="88" text-anchor="middle" font-size="56" font-weight="800" fill="#26221a">dsh 学习路线图 · 费曼学习法版</text>
-  <!-- 手绘感下划线 -->
-  <path d="M545,112 q30,-12 70,0 q40,12 80,0 q40,-12 80,0 q40,12 80,0 q40,-12 80,0 q40,12 80,0 q40,-12 80,0 q30,10 70,-2"
+  <path d="M545,112 q30,-12 70,0 q40,12 80,0 q40,-12 80,0 q40,12 80,0 q40,-12 80,0 q40,12 80,0 q40,-12 80,0 q40,12 80,0 q30,10 70,-2"
         stroke="#D85C4A" stroke-width="6" fill="none" stroke-linecap="round"/>
   <text x="800" y="150" text-anchor="middle" font-size="26" fill="#6b6355">12 章四幕 · 约 40 分钟 · 零基础可读 · 每章看完记得「合上书讲一遍」</text>
 
   <!-- ============ 费曼学习法四步（手绘循环） ============ -->
-  <g>
-    <!-- 四步盒子 -->
-    <g transform="rotate(-0.5 250 250)">
-      <rect x="80" y="210" width="300" height="150" rx="18" fill="#fffdf7" stroke="#26221a" stroke-width="3.5"/>
-      <rect x="88" y="218" width="284" height="134" rx="14" fill="none" stroke="#F3D36B" stroke-width="4" stroke-dasharray="10 8"/>
-      <text x="230" y="268" text-anchor="middle" font-size="34" font-weight="700" fill="#26221a">📖 选一个概念</text>
-      <text x="230" y="310" text-anchor="middle" font-size="20" fill="#6b6355">从 dsh 的宝库里挑一个</text>
-    </g>
-    <path d="M390,285 q60,0 90,0" stroke="#2C5F8A" stroke-width="5" fill="none" marker-end="url(#skArr)"/>
-    <g transform="rotate(0.4 530 250)">
-      <rect x="470" y="210" width="300" height="150" rx="18" fill="#fffdf7" stroke="#26221a" stroke-width="3.5"/>
-      <rect x="478" y="218" width="284" height="134" rx="14" fill="none" stroke="#2C5F8A" stroke-width="4" stroke-dasharray="10 8"/>
-      <text x="620" y="268" text-anchor="middle" font-size="34" font-weight="700" fill="#26221a">🗣️ 用大白话讲</text>
-      <text x="620" y="310" text-anchor="middle" font-size="20" fill="#6b6355">像给 8 岁小孩讲，禁说黑话</text>
-    </g>
-    <path d="M780,285 q60,0 90,0" stroke="#2C5F8A" stroke-width="5" fill="none" marker-end="url(#skArr)"/>
-    <g transform="rotate(-0.3 810 250)">
-      <rect x="860" y="210" width="300" height="150" rx="18" fill="#fffdf7" stroke="#26221a" stroke-width="3.5"/>
-      <rect x="868" y="218" width="284" height="134" rx="14" fill="none" stroke="#5C6B4F" stroke-width="4" stroke-dasharray="10 8"/>
-      <text x="1010" y="268" text-anchor="middle" font-size="34" font-weight="700" fill="#26221a">✍️ 自己复述</text>
-      <text x="1010" y="310" text-anchor="middle" font-size="20" fill="#6b6355">合上书讲一遍，卡壳 = 没懂</text>
-    </g>
-    <path d="M1170,285 q60,0 90,0" stroke="#2C5F8A" stroke-width="5" fill="none" marker-end="url(#skArr)"/>
-    <g transform="rotate(0.5 1290 250)">
-      <rect x="1250" y="210" width="300" height="150" rx="18" fill="#fffdf7" stroke="#26221a" stroke-width="3.5"/>
-      <rect x="1258" y="218" width="284" height="134" rx="14" fill="none" stroke="#D85C4A" stroke-width="4" stroke-dasharray="10 8"/>
-      <text x="1400" y="268" text-anchor="middle" font-size="34" font-weight="700" fill="#26221a">🔍 查漏补缺</text>
-      <text x="1400" y="310" text-anchor="middle" font-size="20" fill="#6b6355">回炉重看，顺便对照源码</text>
-    </g>
-    <!-- 回环箭头 -->
-    <path d="M1400,392 q60,60 -30,60 l-1150,0 q-80,0 -45,-50" stroke="#D85C4A" stroke-width="5" fill="none" stroke-dasharray="12 10" marker-end="url(#skArrR)" stroke-linecap="round"/>
-    <text x="800" y="472" text-anchor="middle" font-size="22" font-weight="600" fill="#D85C4A">每章结尾的「费曼自查」：先自己讲一遍，再看参考答案</text>
+  <g transform="rotate(-0.5 230 285)">
+    <rect x="80" y="210" width="300" height="150" rx="18" fill="#fffdf7" stroke="#26221a" stroke-width="3.5"/>
+    <rect x="88" y="218" width="284" height="134" rx="14" fill="none" stroke="#F3D36B" stroke-width="4" stroke-dasharray="10 8"/>
+    <text x="230" y="268" text-anchor="middle" font-size="34" font-weight="700" fill="#26221a">📖 选一个概念</text>
+    <text x="230" y="312" text-anchor="middle" font-size="20" fill="#6b6355">从 dsh 的宝库里挑一个</text>
   </g>
+  <path d="M390,285 q40,0 76,0" stroke="#2C5F8A" stroke-width="5" fill="none" marker-end="url(#skArr)"/>
+  <g transform="rotate(0.4 620 285)">
+    <rect x="470" y="210" width="300" height="150" rx="18" fill="#fffdf7" stroke="#26221a" stroke-width="3.5"/>
+    <rect x="478" y="218" width="284" height="134" rx="14" fill="none" stroke="#2C5F8A" stroke-width="4" stroke-dasharray="10 8"/>
+    <text x="620" y="268" text-anchor="middle" font-size="34" font-weight="700" fill="#26221a">🗣️ 用大白话讲</text>
+    <text x="620" y="312" text-anchor="middle" font-size="20" fill="#6b6355">像给 8 岁小孩讲，禁说黑话</text>
+  </g>
+  <path d="M780,285 q40,0 76,0" stroke="#2C5F8A" stroke-width="5" fill="none" marker-end="url(#skArr)"/>
+  <g transform="rotate(-0.3 1010 285)">
+    <rect x="860" y="210" width="300" height="150" rx="18" fill="#fffdf7" stroke="#26221a" stroke-width="3.5"/>
+    <rect x="868" y="218" width="284" height="134" rx="14" fill="none" stroke="#5C6B4F" stroke-width="4" stroke-dasharray="10 8"/>
+    <text x="1010" y="268" text-anchor="middle" font-size="34" font-weight="700" fill="#26221a">✍️ 自己复述</text>
+    <text x="1010" y="312" text-anchor="middle" font-size="20" fill="#6b6355">合上书讲一遍，卡壳 = 没懂</text>
+  </g>
+  <path d="M1170,285 q40,0 76,0" stroke="#2C5F8A" stroke-width="5" fill="none" marker-end="url(#skArr)"/>
+  <g transform="rotate(0.5 1400 285)">
+    <rect x="1250" y="210" width="300" height="150" rx="18" fill="#fffdf7" stroke="#26221a" stroke-width="3.5"/>
+    <rect x="1258" y="218" width="284" height="134" rx="14" fill="none" stroke="#D85C4A" stroke-width="4" stroke-dasharray="10 8"/>
+    <text x="1400" y="268" text-anchor="middle" font-size="34" font-weight="700" fill="#26221a">🔍 查漏补缺</text>
+    <text x="1400" y="312" text-anchor="middle" font-size="20" fill="#6b6355">回炉重看，顺便对照源码</text>
+  </g>
+  <!-- 回环箭头：第 4 步回到第 1 步 -->
+  <path d="M1410,385 q50,45 -20,45 l-1100,0 q-70,0 -35,-40"
+        stroke="#D85C4A" stroke-width="5" fill="none" stroke-dasharray="12 10" marker-end="url(#skArrR)" stroke-linecap="round"/>
+  <text x="800" y="478" text-anchor="middle" font-size="22" font-weight="600" fill="#D85C4A">每章结尾的「费曼自查」：先自己讲一遍，再看参考答案</text>
 
   <!-- ============ 四幕旅程 ============ -->
-  <!-- 手绘蜿蜒路径（路的感觉） -->
-  <path d="M60,610 q200,-60 400,0 q200,60 400,0 q200,-60 400,0 q150,40 280,0"
+  <path d="M56,610 q180,-40 365,0 q180,40 365,0 q180,-40 365,0 q180,40 365,0"
         stroke="#2C5F8A" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.35"/>
 
   <!-- 第一幕 -->
-  <g transform="rotate(-0.6 230 690)">
-    <rect x="50" y="540" width="360" height="300" rx="20" fill="#fffdf7" stroke="#26221a" stroke-width="4"/>
-    <rect x="50" y="540" width="360" height="64" rx="20" fill="#2C5F8A"/>
-    <rect x="50" y="584" width="360" height="20" fill="#2C5F8A"/>
-    <text x="230" y="582" text-anchor="middle" font-size="28" font-weight="800" fill="#ffffff">第一幕 · 它是什么</text>
-    <text x="230" y="638" text-anchor="middle" font-size="19" fill="#8a8172">第 01–03 章 · 先搭起框架</text>
-    <text x="90" y="680" font-size="21" fill="#26221a">· 一分钟看懂 dsh</text>
-    <text x="90" y="720" font-size="21" fill="#26221a">· 万物皆插件（乐高积木）</text>
-    <text x="90" y="760" font-size="21" fill="#26221a">· 和 Claude Code / Codex 比一比</text>
+  <g transform="rotate(-0.6 222 690)">
+    <rect x="52" y="540" width="340" height="300" rx="20" fill="#fffdf7" stroke="#26221a" stroke-width="4"/>
+    <rect x="52" y="540" width="340" height="64" rx="20" fill="#2C5F8A"/>
+    <rect x="52" y="584" width="340" height="20" fill="#2C5F8A"/>
+    <text x="222" y="582" text-anchor="middle" font-size="28" font-weight="800" fill="#ffffff">第一幕 · 它是什么</text>
+    <text x="222" y="638" text-anchor="middle" font-size="19" fill="#8a8172">第 01–03 章 · 先搭起框架</text>
+    <text x="90" y="672" font-size="21" fill="#26221a">· 一分钟看懂 dsh</text>
+    <text x="90" y="712" font-size="21" fill="#26221a">· 万物皆插件（乐高积木）</text>
+    <text x="90" y="752" font-size="21" fill="#26221a">· 和 Claude Code / Codex 比一比</text>
     <text x="90" y="812" font-size="17" fill="#2C5F8A" font-weight="600">🎯 目标：说出 dsh 是干嘛的</text>
   </g>
-  <!-- 连接箭头 -->
-  <path d="M430,690 q60,0 88,0" stroke="#2C5F8A" stroke-width="6" fill="none" marker-end="url(#skArr)"/>
+  <path d="M396,690 q18,0 37,0" stroke="#2C5F8A" stroke-width="6" fill="none" marker-end="url(#skArr)"/>
 
   <!-- 第二幕 -->
-  <g transform="rotate(0.5 610 690)">
-    <rect x="500" y="540" width="360" height="300" rx="20" fill="#fffdf7" stroke="#26221a" stroke-width="4"/>
-    <rect x="500" y="540" width="360" height="64" rx="20" fill="#D85C4A"/>
-    <rect x="500" y="584" width="360" height="20" fill="#D85C4A"/>
-    <text x="680" y="582" text-anchor="middle" font-size="28" font-weight="800" fill="#ffffff">第二幕 · 核心机制</text>
-    <text x="680" y="638" text-anchor="middle" font-size="19" fill="#8a8172">第 04–06 章 · 框架的骨架</text>
-    <text x="540" y="680" font-size="21" fill="#26221a">· Cordis 五件事</text>
-    <text x="540" y="720" font-size="21" fill="#26221a">· 一次对话的旅程（轮次）</text>
-    <text x="540" y="760" font-size="21" fill="#26221a">· 会话日志：唯一真源</text>
-    <text x="540" y="812" font-size="17" fill="#D85C4A" font-weight="600">🎯 目标：明白「日志是账本」</text>
+  <g transform="rotate(0.5 607 690)">
+    <rect x="437" y="540" width="340" height="300" rx="20" fill="#fffdf7" stroke="#26221a" stroke-width="4"/>
+    <rect x="437" y="540" width="340" height="64" rx="20" fill="#D85C4A"/>
+    <rect x="437" y="584" width="340" height="20" fill="#D85C4A"/>
+    <text x="607" y="582" text-anchor="middle" font-size="28" font-weight="800" fill="#ffffff">第二幕 · 核心机制</text>
+    <text x="607" y="638" text-anchor="middle" font-size="19" fill="#8a8172">第 04–06 章 · 框架的骨架</text>
+    <text x="475" y="672" font-size="21" fill="#26221a">· Cordis 五件事</text>
+    <text x="475" y="712" font-size="21" fill="#26221a">· 一次对话的旅程（轮次）</text>
+    <text x="475" y="752" font-size="21" fill="#26221a">· 会话日志：唯一真源</text>
+    <text x="475" y="812" font-size="17" fill="#D85C4A" font-weight="600">🎯 目标：明白「日志是账本」</text>
   </g>
-  <path d="M880,690 q60,0 88,0" stroke="#2C5F8A" stroke-width="6" fill="none" marker-end="url(#skArr)"/>
+  <path d="M781,690 q18,0 37,0" stroke="#2C5F8A" stroke-width="6" fill="none" marker-end="url(#skArr)"/>
 
   <!-- 第三幕 -->
-  <g transform="rotate(-0.4 990 690)">
-    <rect x="950" y="540" width="360" height="300" rx="20" fill="#fffdf7" stroke="#26221a" stroke-width="4"/>
-    <rect x="950" y="540" width="360" height="64" rx="20" fill="#5C6B4F"/>
-    <rect x="950" y="584" width="360" height="20" fill="#5C6B4F"/>
-    <text x="1130" y="582" text-anchor="middle" font-size="28" font-weight="800" fill="#ffffff">第三幕 · 可插拔能力</text>
-    <text x="1130" y="638" text-anchor="middle" font-size="19" fill="#8a8172">第 07–10 章 · 万物皆插件的底气</text>
-    <text x="990" y="680" font-size="21" fill="#26221a">· 能力缝：可替换的能力</text>
-    <text x="990" y="720" font-size="21" fill="#26221a">· 工具与执行流水线</text>
-    <text x="990" y="760" font-size="21" fill="#26221a">· 作用域：独立办公室</text>
-    <text x="990" y="800" font-size="21" fill="#26221a">· 委派与扩展</text>
-    <text x="990" y="812" font-size="17" fill="#5C6B4F" font-weight="600">🎯 目标：知道哪块能换</text>
+  <g transform="rotate(-0.4 992 690)">
+    <rect x="822" y="540" width="340" height="300" rx="20" fill="#fffdf7" stroke="#26221a" stroke-width="4"/>
+    <rect x="822" y="540" width="340" height="64" rx="20" fill="#5C6B4F"/>
+    <rect x="822" y="584" width="340" height="20" fill="#5C6B4F"/>
+    <text x="992" y="582" text-anchor="middle" font-size="28" font-weight="800" fill="#ffffff">第三幕 · 可插拔能力</text>
+    <text x="992" y="638" text-anchor="middle" font-size="19" fill="#8a8172">第 07–10 章 · 万物皆插件的底气</text>
+    <text x="860" y="664" font-size="21" fill="#26221a">· 能力缝：可替换的能力</text>
+    <text x="860" y="696" font-size="21" fill="#26221a">· 工具与执行流水线</text>
+    <text x="860" y="728" font-size="21" fill="#26221a">· 作用域：独立办公室</text>
+    <text x="860" y="760" font-size="21" fill="#26221a">· 委派与扩展</text>
+    <text x="860" y="812" font-size="17" fill="#5C6B4F" font-weight="600">🎯 目标：知道哪块能换</text>
   </g>
-  <path d="M1330,690 q60,0 88,0" stroke="#2C5F8A" stroke-width="6" fill="none" marker-end="url(#skArr)"/>
+  <path d="M1166,690 q18,0 37,0" stroke="#2C5F8A" stroke-width="6" fill="none" marker-end="url(#skArr)"/>
 
   <!-- 第四幕 -->
-  <g transform="rotate(0.4 1370 690)">
-    <rect x="1400" y="540" width="360" height="300" rx="20" fill="#fffdf7" stroke="#26221a" stroke-width="4"/>
-    <rect x="1400" y="540" width="360" height="64" rx="20" fill="#B08A2E"/>
-    <rect x="1400" y="584" width="360" height="20" fill="#B08A2E"/>
-    <text x="1580" y="582" text-anchor="middle" font-size="28" font-weight="800" fill="#ffffff">第四幕 · 动手与资源</text>
-    <text x="1580" y="638" text-anchor="middle" font-size="19" fill="#8a8172">第 11–12 章 · 做出来才算懂</text>
-    <text x="1440" y="680" font-size="21" fill="#26221a">· 动手：跑起来 + 写插件</text>
-    <text x="1440" y="720" font-size="21" fill="#26221a">· 术语表与下一步</text>
-    <text x="1440" y="812" font-size="17" fill="#B08A2E" font-weight="600">🎯 目标：跑通第一个组合包</text>
+  <g transform="rotate(0.4 1377 690)">
+    <rect x="1207" y="540" width="340" height="300" rx="20" fill="#fffdf7" stroke="#26221a" stroke-width="4"/>
+    <rect x="1207" y="540" width="340" height="64" rx="20" fill="#B08A2E"/>
+    <rect x="1207" y="584" width="340" height="20" fill="#B08A2E"/>
+    <text x="1377" y="582" text-anchor="middle" font-size="28" font-weight="800" fill="#ffffff">第四幕 · 动手与资源</text>
+    <text x="1377" y="638" text-anchor="middle" font-size="19" fill="#8a8172">第 11–12 章 · 做出来才算懂</text>
+    <text x="1245" y="672" font-size="21" fill="#26221a">· 动手：跑起来 + 写插件</text>
+    <text x="1245" y="712" font-size="21" fill="#26221a">· 术语表与下一步</text>
+    <text x="1245" y="812" font-size="17" fill="#B08A2E" font-weight="600">🎯 目标：跑通第一个组合包</text>
   </g>
 
   <!-- ============ 结业 ============ -->
@@ -123,10 +116,10 @@
     <text x="800" y="915" text-anchor="middle" font-size="24" font-weight="700" fill="#26221a">🎓 结业挑战：把 dsh 讲给一个完全没读过教程的朋友 —— 讲得通，才算真的懂</text>
   </g>
 
+  <!-- 理解锚点（放在卡片之间的空隙里） -->
+  <text x="402" y="505" font-size="30">✨</text>
+  <text x="1164" y="508" font-size="36">💡</text>
+
   <!-- 右下角手写页码 -->
   <text x="1548" y="968" text-anchor="middle" font-size="26" fill="#a89f8f" transform="rotate(-6 1548 968)" font-style="italic">p.1</text>
-
-  <!-- 小理解锚点：灯泡 + 星号 -->
-  <text x="1465" y="250" font-size="40">💡</text>
-  <text x="120" y="500" font-size="34">✨</text>
 </svg>
